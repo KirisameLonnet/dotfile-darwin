@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# JankyBorders Configuration - FelixKratz Style
+# Modern window borders with enhanced focus indication
+
+options=(
+    style=round
+    width=8.0                    # Thicker borders for better visibility
+    hidpi=on                     # Better rendering on Retina displays
+    active_color=0xff89b4fa      # Catppuccin blue - focused window
+    inactive_color=0x30313244    # More subtle semi-transparent surface0 - unfocused
+    background_color=0x001e1e2e  # Transparent base background
+    ax_focus=on                  # Enable accessibility focus
+    # Enhanced visual effects
+    blur_radius=30               # Subtle blur effect behind borders
+    saturation=1.8               # Enhanced color saturation for active border
+    # Exclude system and utility apps from border management
+    blacklist="Finder,Raycast,CleanMyMac,System Preferences,System Settings,Activity Monitor,Calculator,Archive Utility,Digital Colormeter,Console,KeyShade,1Password"
+)
+
+borders "${options[@]}"
