@@ -51,6 +51,9 @@
     nil                # Nix language server
     nixpkgs-fmt        # Nix formatter
     nix-tree           # Dependency visualization
+    home-manager       # Home Manager CLI tool
+    direnv             # auto change env by .envrc in folder
+    nix-direnv         # nix plugin for direnv
     
     # Modern Unix Tools
     choose             # Human-friendly cut
@@ -58,7 +61,5 @@
     procs              # ps alternative
     dust               # du alternative
     hyperfine          # Benchmarking tool
-    direnv             # auto change env by .envrc in folder
-    nix-direnv         # nix plugin for direnv
   ];
 }

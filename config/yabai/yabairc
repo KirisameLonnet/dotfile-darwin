@@ -110,7 +110,8 @@ yabai -m rule --add app="^Logi Options$" manage=off
 yabai -m rule --add app="^PrintShop$" manage=off
 yabai -m rule --add app="^BRAW Toolbox$" manage=off
 yabai -m rule --add app="^Wireless Diagnostics$" manage=off
-yabai -m rule --add app="^WeChat$" manage=off
+  #yabai -m rule --add app="^WeChat$" manage=off
+yabai -m rule --add app="^iWall$" manage=off
 
 # Float small utility windows
 yabai -m rule --add app="^Digital Colormeter$" sticky=on layer=above manage=off
