@@ -8,6 +8,7 @@
     ./terminal.nix
     ./development.nix
     ./ui.nix
+    ./envdir.nix
   ];
 
   # Basic home manager configuration

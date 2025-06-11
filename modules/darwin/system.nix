@@ -10,9 +10,6 @@
   # Create /etc/zshrc that loads the nix-darwin environment.
   programs.zsh.enable = true;
 
-  # Set Git commit hash for darwin-version.
-  system.configurationRevision = null;
-
   # Used for backwards compatibility
   system.stateVersion = 5;
 
@@ -27,6 +24,13 @@
   
   # Set primary user for system preferences
   system.primaryUser = "lonnetkirisame";
+
+  # Environment variables
+  environment.variables = {
+    EDITOR = "vim";
+    VISUAL = "vim";
+    GIT_EDITOR = "vim";
+  };
 
   # System preferences
   system.defaults = {

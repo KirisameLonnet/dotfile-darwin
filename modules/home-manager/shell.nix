@@ -10,6 +10,11 @@
     
     # Environment variables to suppress macOS system logs
     sessionVariables = {
+      # Default text editor
+      EDITOR = "vim";
+      VISUAL = "vim";
+      GIT_EDITOR = "vim";
+      
       # Suppress macOS input method and keyboard logs
       OS_ACTIVITY_MODE = "disable";
       # Reduce CoreFoundation logging

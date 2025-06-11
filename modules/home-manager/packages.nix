@@ -58,5 +58,7 @@
     procs              # ps alternative
     dust               # du alternative
     hyperfine          # Benchmarking tool
+    direnv             # auto change env by .envrc in folder
+    nix-direnv         # nix plugin for direnv
   ];
 }
