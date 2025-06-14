@@ -11,9 +11,9 @@
     # Environment variables to suppress macOS system logs
     sessionVariables = {
       # Default text editor
-      EDITOR = "vim";
-      VISUAL = "vim";
-      GIT_EDITOR = "vim";
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+      GIT_EDITOR = "nvim";
       
       # Suppress macOS input method and keyboard logs
       OS_ACTIVITY_MODE = "disable";

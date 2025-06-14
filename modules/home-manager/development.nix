@@ -4,7 +4,6 @@
   # Development tools and packages
   home.packages = with pkgs; [
     # Core development tools
-    neovim
     tmux
     zellij
     
@@ -22,6 +21,7 @@
     fzf           # Fuzzy finder
     tree          # Directory tree
     htop          # System monitor
+    
     btop          # Better htop
     dust          # Better du
     duf           # Better df
