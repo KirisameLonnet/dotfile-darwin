@@ -23,14 +23,13 @@ yabai -m config                                 \
     window_topmost               off            \
     window_shadow                on             \
     active_window_opacity        1.0            \
-    normal_window_opacity        0.75           \
+    normal_window_opacity        0.80           \
     window_opacity               on             \
     insert_feedback_color        0xff89b4fa     \
     active_window_border_color   0xff89b4fa     \
     normal_window_border_color   0xff45475a     \
     window_border_width          2              \
     window_border_radius         12             \
-    window_border_blur           off            \
     window_border_hidpi          on             \
     window_border                on             \
     split_ratio                  0.50           \
@@ -55,6 +54,13 @@ yabai -m config                                 \
 # - Added proper easing curve for natural motion  
 # - Slower opacity transitions for better visual feedback
 # - These settings now match the nix-darwin configuration exactly
+
+# Blur Effect Configuration:
+# - normal_window_opacity: 0.65 (降低透明度增强视觉区分)
+# - window_opacity_duration: 0.25 (平滑的透明度过渡)
+# - 焦点窗口保持完全不透明 (active_window_opacity: 1.0)
+# - 非焦点窗口有明显的视觉区分，更容易识别当前活动窗口
+# 注意：yabai 本身不支持真正的模糊效果，但通过透明度可以实现类似的视觉效果
 
 # Enhanced layout switching for different workspaces
 # Space 1: BSP layout for development

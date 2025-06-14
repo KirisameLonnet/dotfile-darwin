@@ -19,7 +19,10 @@
     tokei              # Code statistics
     vim                # Text editor (Neovim preferred, but vim for compatibility)
     yazi               # Yet another zsh interface (alternative to oh-my-zsh)
-    
+    vscode             # Just visual studio code
+    neovim               # Better vim
+
+
     # System Monitoring
     htop               # Process viewer
     btop               # Modern system monitor
