@@ -20,7 +20,7 @@
     vim                # Text editor (Neovim preferred, but vim for compatibility)
     yazi               # Yet another zsh interface (alternative to oh-my-zsh)
     vscode             # Just visual studio code
-    neovim               # Better vim
+    neovim             # Better vim
 
 
     # System Monitoring

@@ -9,7 +9,7 @@
     ./development.nix
     ./ui.nix
     ./envdir.nix
-    ./editor/vim.nix
+    ./editor/nvim.nix
   ];
 
   # Basic home manager configuration
