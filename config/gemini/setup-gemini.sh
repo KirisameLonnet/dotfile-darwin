@@ -38,19 +38,14 @@ fi
 
 echo -e "${GREEN}✅ npm 可用${NC}"
 
-# 安装 Gemini CLI
-echo -e "${YELLOW}安装 Gemini CLI...${NC}"
-if ! command -v gemini &> /dev/null; then
-    echo -e "${YELLOW}正在安装 @google/gemini-cli...${NC}"
-    npm install -g @google/gemini-cli
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✅ Gemini CLI 安装成功${NC}"
-    else
-        echo -e "${RED}❌ Gemini CLI 安装失败${NC}"
-        exit 1
-    fi
+# 检查 Gemini CLI 可用性
+echo -e "${YELLOW}检查 Gemini CLI 可用性...${NC}"
+if timeout 5 npx --help &>/dev/null; then
+    echo -e "${GREEN}✅ 可以使用 npx @google/gemini-cli${NC}"
+    echo -e "${BLUE}💡 建议使用 npx 方式运行 Gemini CLI（无需全局安装）${NC}"
 else
-    echo -e "${GREEN}✅ Gemini CLI 已安装${NC}"
+    echo -e "${RED}❌ npx 不可用${NC}"
+    exit 1
 fi
 
 # 检查 API 密钥

@@ -82,7 +82,8 @@
       restart-wm = "brew services restart yabai && brew services restart skhd && brew services restart borders";  # SketchyBar removed
       
       # AI/ML Tools aliases  
-      gm = "gemini";                               # Gemini CLI shortcut
+      gm = "npx @google/gemini-cli";               # Gemini CLI shortcut (via npx)
+      gemini = "npx @google/gemini-cli";           # Direct Gemini CLI access
       gemini-setup = "~/.config/nixconfig/config/gemini/setup-gemini.sh";  # Setup script
       gemini-help = "~/.config/nixconfig/config/gemini/gemini-helpers.sh --help";  # Helper script
       gemini-status = "~/.config/nixconfig/config/gemini/gemini-helpers.sh --status";  # Check status

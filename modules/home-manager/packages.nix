@@ -58,7 +58,7 @@
     delta              # Better diff
     
     # ===== TEXT EDITORS =====
-    neovim             # Modern vim
+    # neovim is configured via programs.neovim in editor/nvim.nix
     vim                # Classic vim (compatibility)
     vscode             # Visual Studio Code
     
