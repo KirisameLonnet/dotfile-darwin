@@ -45,9 +45,6 @@ restart-skhd: ## Restart skhd hotkey daemon
 	@echo "⌨️ Restarting skhd..."
 	@launchctl kickstart -k gui/$$(id -u)/org.nixos.skhd || echo "skhd agent restart attempted"
 
-restart-sketchybar: ## Restart SketchyBar - DISABLED
-	@echo "📊 SketchyBar is disabled in this configuration"
-
 update: ## Update flake inputs and rebuild
 	@echo "🔄 Updating flake inputs..."
 	@nix flake update
@@ -138,4 +135,24 @@ backup: ## Create backup of current configuration
 	@tar -czf "backup-$$(date +%Y%m%d-%H%M%S).tar.gz" --exclude="result" --exclude="*.tar.gz" .
 	@echo "Backup created: backup-$$(date +%Y%m%d-%H%M%S).tar.gz"
 
-.PHONY: help install build switch clean restart-all restart-yabai restart-skhd restart-sketchybar update nixup check format permissions info test status logs backup
+setup-gemini: ## Setup Gemini CLI configuration
+	@echo "🤖 Setting up Gemini CLI..."
+	@./config/gemini/setup-gemini.sh
+
+test-gemini: ## Test Gemini CLI connection
+	@echo "🧪 Testing Gemini CLI..."
+	@if [ -z "$$GEMINI_API_KEY" ]; then \
+		echo "❌ GEMINI_API_KEY not set"; \
+		exit 1; \
+	fi
+	@echo "Testing gemini-cli..."
+	@gemini-cli "Hello, please respond with 'Test successful'" 2>/dev/null || echo "❌ gemini-cli test failed"
+	@echo "Testing aichat..."
+	@aichat "Hello, please respond with 'Test successful'" 2>/dev/null || echo "❌ aichat test failed"
+
+gemini-help: ## Show Gemini CLI usage help
+	@echo "🤖 Gemini CLI Help"
+	@echo "=================="
+	@cat config/gemini/README.md | head -50
+
+.PHONY: help install build switch clean restart-all restart-yabai restart-skhd restart-sketchybar update nixup check format permissions info test status logs backup setup-gemini test-gemini gemini-help

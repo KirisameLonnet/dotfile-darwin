@@ -1,75 +1,37 @@
 { config, pkgs, ... }:
 
 {
-  # SketchyBar configuration with SbarLua support - DISABLED
-  # home.file.".config/sketchybar/init.lua" = {
-  #   source = ../../config/sketchybar/init.lua;
-  #   executable = true;
-  # };
-  
-  # home.file.".config/sketchybar/sketchybarrc" = {
-  #   source = ../../config/sketchybar/sketchybarrc;
-  #   executable = true;
-  # };
-  
-  # home.file.".config/sketchybar/colors" = {
-  #   source = ../../config/sketchybar/colors;
-  #   recursive = true;
-  #   executable = true;
-  # };
-  
-  # home.file.".config/sketchybar/items" = {
-  #   source = ../../config/sketchybar/items;
-  #   recursive = true;
-  #   executable = true;
-  # };
-  
-  # home.file.".config/sketchybar/plugins" = {
-  #   source = ../../config/sketchybar/plugins;
-  #   recursive = true;
-  #   executable = true;
-  # };
+  # UI and Interface Configuration
+  # Note: Starship is configured in terminal.nix to avoid duplication
 
-  # Yabai configuration
-  home.file.".config/yabai/yabairc" = {
-    source = ../../config/yabai/yabairc;
-    executable = true;
+  # Window Manager Configuration Files
+  home.file.".config/yabai" = {
+    source = ../../config/yabai;
+    recursive = true;
   };
 
-  # skhd configuration  
-  home.file.".config/skhd/skhdrc" = {
-    source = ../../config/skhd/skhdrc;
-    executable = true;
+  home.file.".config/skhd" = {
+    source = ../../config/skhd;
+    recursive = true;
   };
 
-  # Finder Go To Folder script (managed by nix)
-  home.file.".config/skhd/finder-goto.sh" = {
-    text = ''
-      #!/bin/bash
-      # Finder Go To Folder script - managed by home-manager
-      /usr/bin/osascript -e 'tell application "Finder" to activate' -e 'delay 0.2' -e 'tell application "System Events" to keystroke "g" using {command down, shift down}'
-    '';
-    executable = true;
+  # Gemini CLI configuration
+  home.file.".config/gemini" = {
+    source = ../../config/gemini;
+    recursive = true;
   };
 
-  # JankyBorders configuration (FelixKratz window decorations)
-  home.file.".config/borders/bordersrc" = {
-    source = ../../config/borders/bordersrc;
-    executable = true;
+  # FelixKratz workflow integration
+  home.file.".config/fnnn" = {
+    source = ../../config/fnnn;
+    recursive = true;
   };
 
-  # fnnn configuration (FelixKratz's custom nnn)
-  home.file.".config/fnnn/config.sh" = {
-    source = ../../config/fnnn/config.sh;
-    executable = true;
+  # Borders configuration  
+  home.file.".config/borders" = {
+    source = ../../config/borders;
+    recursive = true;
   };
-
-  # Create necessary directories
-  # home.file.".config/sketchybar/.keep".text = "";  # DISABLED
-  home.file.".config/yabai/.keep".text = "";
-  home.file.".config/skhd/.keep".text = "";
-  home.file.".config/borders/.keep".text = "";
-  home.file.".config/fnnn/.keep".text = "";
 
   # System management scripts (managed by nix)
   home.file.".local/bin/wm-status" = {

@@ -54,8 +54,10 @@
       let g:copilot_no_tab_map = v:true
       imap <silent><script><expr> <C-Space> copilot#Accept()
     '';
-    # ... 其他插件和配置 ...
+    # Plugins are managed by packer.nvim automatically
+    # No need to manually copy plugin files
   };
 
-  home.file.".config/nvim/plugins".source = ./plugins;
+  # Plugins are managed by packer.nvim, not through home.file
+  # The packer configuration above will automatically install and manage plugins
 }

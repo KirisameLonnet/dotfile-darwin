@@ -8,52 +8,13 @@
     ./window-manager.nix
   ];
 
-  # Basic system packages - prioritize Nix over Homebrew
+  # Basic system packages - Only essential system-level packages
   environment.systemPackages = with pkgs; [
-    # Core utilities
-    vim
-    git
-    curl
-    wget
-    tree
-    htop
-    jq
-    ripgrep
-    fd
-    eza
-    bat
-    fzf
-    gh
+    # Core system utilities (needed for nix-darwin functionality)
+    vim                # Basic editor
+    curl               # System network tool
     
-    # Development
-    nodejs
-    python3
-    rustc
-    cargo
-    go
-    
-    # Window management
-    yabai
-    skhd
-    
-    # System tools
-    mas # Mac App Store CLI
-    coreutils
-    findutils
-    gnused
-    gawk
-    gnugrep
-    
-    # Media tools
-    imagemagick
-    ffmpeg
-    
-    # Network tools
-    httpie
-    
-    # Archive tools
-    unzip
-    p7zip
+    # Note: Window management tools (yabai, skhd) are defined in window-manager.nix
   ];
 
   # Minimal Homebrew usage - only for packages that absolutely need it

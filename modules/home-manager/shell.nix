@@ -21,6 +21,12 @@
       CFLOG_FORCE_DISABLE_STDERR = "1";
       # Suppress TSM (Text Services Manager) logs
       TSM_DISABLE_LOG = "1";
+      
+      # Gemini CLI Configuration
+      # Note: Set your actual API key in ~/.gemini/.env or your shell profile
+      # GEMINI_API_KEY = "your-api-key-here";
+      # GOOGLE_CLOUD_PROJECT = "your-project-id";  # Required for Workspace accounts
+      # GOOGLE_CLOUD_LOCATION = "us-central1";     # Optional, for Vertex AI
     };
     
     shellAliases = {
@@ -74,6 +80,12 @@
       # sb = "sketchybar";                            # SketchyBar control - DISABLED
       borders = "borders";                          # JankyBorders control
       restart-wm = "brew services restart yabai && brew services restart skhd && brew services restart borders";  # SketchyBar removed
+      
+      # AI/ML Tools aliases  
+      gm = "gemini";                               # Gemini CLI shortcut
+      gemini-setup = "~/.config/nixconfig/config/gemini/setup-gemini.sh";  # Setup script
+      gemini-help = "~/.config/nixconfig/config/gemini/gemini-helpers.sh --help";  # Helper script
+      gemini-status = "~/.config/nixconfig/config/gemini/gemini-helpers.sh --status";  # Check status
     };
     
     initContent = ''
@@ -146,6 +158,11 @@
       
       # Enhanced path for FelixKratz tools
       export PATH="/opt/homebrew/bin:$PATH"
+      
+      # Gemini CLI helper functions  
+      if [ -f "$HOME/.config/nixconfig/config/gemini/gemini-helpers.sh" ]; then
+        alias gemini-helper="$HOME/.config/nixconfig/config/gemini/gemini-helpers.sh"
+      fi
     '';
   };
 

@@ -176,5 +176,7 @@
       };
     };
   };
+  
+  # Note: Starship prompt is configured in shell.nix to avoid duplication
 }
 

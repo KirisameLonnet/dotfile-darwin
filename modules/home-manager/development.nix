@@ -1,81 +1,14 @@
 { config, pkgs, ... }:
 
 {
-  # Development tools and packages
-  home.packages = with pkgs; [
-    # Core development tools
-    tmux
-    zellij
-    
-    # Version control
-    git
-    gh
-    lazygit
-    delta  # Better git diff
-    
-    # Modern CLI tools
-    eza           # Better ls
-    bat           # Better cat
-    ripgrep       # Better grep
-    fd            # Better find
-    fzf           # Fuzzy finder
-    tree          # Directory tree
-    htop          # System monitor
-    
-    btop          # Better htop
-    dust          # Better du
-    duf           # Better df
-    procs         # Better ps
-    
-    # Programming languages and tools
-    nodejs        # JavaScript runtime
-    python3       # Python interpreter
-    python3Packages.pip
-    rustc         # Rust compiler
-    cargo         # Rust package manager
-    go            # Go language
-    
-    # Build tools
-    gnumake       # Make build tool
-    cmake         # Cross-platform build tool
-    pkg-config    # Package configuration
-    
-    # System utilities
-    coreutils     # Core utilities
-    findutils     # Find utilities
-    gnused        # GNU sed
-    gawk          # GNU awk
-    gnugrep       # GNU grep
-    curl          # HTTP client
-    wget          # Web getter
-    httpie        # Modern HTTP client
-    jq            # JSON processor
-    yq            # YAML processor
-    
-    # Archive tools
-    unzip         # ZIP extractor
-    p7zip         # 7-Zip tool
-    
-    # Media tools
-    imagemagick   # Image manipulation
-    ffmpeg        # Video processing
-    
-    # Nix tools
-    nixpkgs-fmt   # Nix formatter
-    nil           # Nix LSP
-    nix-tree      # Nix dependency tree
-    nix-du        # Nix disk usage
-    
-    # macOS specific tools
-    mas           # Mac App Store CLI
-    m-cli         # macOS management CLI
-  ];
-
+  # Development-specific configurations and specialized tools
+  # Note: All packages are managed in packages.nix
+  
   # Git configuration
   programs.git = {
     enable = true;
     userName = "lonnetkirisame";
-    userEmail = "your-email@example.com";  # Replace with your email
+    userEmail = "your-email@example.com";
     
     extraConfig = {
       init.defaultBranch = "main";
@@ -195,4 +128,7 @@
       setw -g window-status-format " #I#[fg=colour237]:#[fg=colour250]#W#[fg=colour244]#F "
     '';
   };
+  
+  # Note: All packages are now managed in packages.nix
+  # This file only contains program configurations
 }
