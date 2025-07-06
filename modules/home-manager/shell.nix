@@ -23,10 +23,8 @@
       TSM_DISABLE_LOG = "1";
       
       # Gemini CLI Configuration
-      # Note: Set your actual API key in ~/.gemini/.env or your shell profile
-      # GEMINI_API_KEY = "your-api-key-here";
-      # GOOGLE_CLOUD_PROJECT = "your-project-id";  # Required for Workspace accounts
-      # GOOGLE_CLOUD_LOCATION = "us-central1";     # Optional, for Vertex AI
+      # Configuration is now managed by gemini.nix module
+      # API key should be set in ~/.gemini/.env file
     };
     
     shellAliases = {
@@ -82,11 +80,7 @@
       restart-wm = "brew services restart yabai && brew services restart skhd && brew services restart borders";  # SketchyBar removed
       
       # AI/ML Tools aliases  
-      gm = "npx @google/gemini-cli";               # Gemini CLI shortcut (via npx)
-      gemini = "npx @google/gemini-cli";           # Direct Gemini CLI access
-      gemini-setup = "~/.config/nixconfig/config/gemini/setup-gemini.sh";  # Setup script
-      gemini-help = "~/.config/nixconfig/config/gemini/gemini-helpers.sh --help";  # Helper script
-      gemini-status = "~/.config/nixconfig/config/gemini/gemini-helpers.sh --status";  # Check status
+      # Gemini CLI aliases are now managed by gemini.nix module
     };
     
     initContent = ''
@@ -160,10 +154,7 @@
       # Enhanced path for FelixKratz tools
       export PATH="/opt/homebrew/bin:$PATH"
       
-      # Gemini CLI helper functions  
-      if [ -f "$HOME/.config/nixconfig/config/gemini/gemini-helpers.sh" ]; then
-        alias gemini-helper="$HOME/.config/nixconfig/config/gemini/gemini-helpers.sh"
-      fi
+      # Gemini CLI helper functions are now managed by gemini.nix module
     '';
   };
 

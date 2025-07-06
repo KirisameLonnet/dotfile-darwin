@@ -135,9 +135,10 @@ backup: ## Create backup of current configuration
 	@tar -czf "backup-$$(date +%Y%m%d-%H%M%S).tar.gz" --exclude="result" --exclude="*.tar.gz" .
 	@echo "Backup created: backup-$$(date +%Y%m%d-%H%M%S).tar.gz"
 
-setup-gemini: ## Setup Gemini CLI configuration
-	@echo "🤖 Setting up Gemini CLI..."
-	@./config/gemini/setup-gemini.sh
+setup-gemini: ## Setup Gemini CLI configuration (now managed by Nix)
+	@echo "🤖 Gemini CLI is now managed by Nix configuration"
+	@echo "📝 Edit ~/.gemini/.env to set your API key"
+	@echo "🔧 Run 'gemini-doctor' to check configuration"
 
 test-gemini: ## Test Gemini CLI connection
 	@echo "🧪 Testing Gemini CLI..."
@@ -145,14 +146,22 @@ test-gemini: ## Test Gemini CLI connection
 		echo "❌ GEMINI_API_KEY not set"; \
 		exit 1; \
 	fi
-	@echo "Testing gemini-cli..."
-	@gemini-cli "Hello, please respond with 'Test successful'" 2>/dev/null || echo "❌ gemini-cli test failed"
-	@echo "Testing aichat..."
-	@aichat "Hello, please respond with 'Test successful'" 2>/dev/null || echo "❌ aichat test failed"
+	@echo "Testing Gemini CLI via npx..."
+	@npx @google/gemini-cli "Hello, please respond with 'Test successful'" 2>/dev/null || echo "❌ Gemini CLI test failed"
 
 gemini-help: ## Show Gemini CLI usage help
 	@echo "🤖 Gemini CLI Help"
 	@echo "=================="
-	@cat config/gemini/README.md | head -50
+	@echo "Gemini CLI is now fully integrated into Nix configuration."
+	@echo ""
+	@echo "Available commands:"
+	@echo "  gemini \"your question\"  - Quick questions"
+	@echo "  gemini -i               - Interactive mode"
+	@echo "  gemini-quick            - With environment loading"
+	@echo "  gemini-doctor           - Health check and diagnostics"
+	@echo ""
+	@echo "Configuration:"
+	@echo "  ~/.gemini/.env          - API key configuration"
+	@echo "  ~/.gemini/settings.json - Gemini CLI settings"
 
 .PHONY: help install build switch clean restart-all restart-yabai restart-skhd restart-sketchybar update nixup check format permissions info test status logs backup setup-gemini test-gemini gemini-help

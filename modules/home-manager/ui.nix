@@ -15,12 +15,6 @@
     recursive = true;
   };
 
-  # Gemini CLI configuration
-  home.file.".config/gemini" = {
-    source = ../../config/gemini;
-    recursive = true;
-  };
-
   # FelixKratz workflow integration
   home.file.".config/fnnn" = {
     source = ../../config/fnnn;

@@ -3,13 +3,14 @@
 
 {
   imports = [
-    ./packages.nix
+    ./packages.nix            # Unified package management (includes all package modules)
     ./shell.nix
     ./terminal.nix
     ./development.nix
     ./ui.nix
     ./envdir.nix
     ./editor/nvim.nix
+    ./gemini.nix              # Gemini CLI configuration
   ];
 
   # Basic home manager configuration
