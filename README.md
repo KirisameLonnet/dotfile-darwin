@@ -43,7 +43,7 @@
 <details>
 <summary>点击展开/折叠 Makefile 命令列表</summary>
 
-| 命令 | 描述 |
+| 命令 | 描述 |        
 | :--- | :--- |
 | **核心命令** | |
 | `make switch` | **(最常用)** 构建并应用新配置。对配置的任何更改都通过此命令生效。 |
@@ -151,19 +151,6 @@
 
 - **添加软件包**: 编辑 `modules/home-manager/packages/` 或 `modules/darwin/homebrew.nix`，然后运行 `make switch`。
 - **修改快捷键**: 编辑 `config/skhd/skhdrc`，然后运行 `make restart-skhd` 或 `make switch`。
-- **修改 Neovim**: 编辑 `modules/home-manager/editor/nvim.nix`，然后运行 `make switch`。
+- **修改 Neovim**: 编辑 `modules/home-manager/editor/nvim.nix`，然后运行 `make switch`.
 
-## ⁉️ 故障排除
 
-- **窗口管理器不工作?**
-  1.  检查辅助功能权限 (`make permissions`)。
-  2.  尝试重启服务: `make restart-all`。
-  3.  查看日志: `make logs`。
-
-- **配置出错需要回滚?**
-  Nix 的 "generation" 特性让回滚变得非常简单和安全。
-  ```bash
-  # 回滚到上一个可用的配置
-  sudo darwin-rebuild rollback
-  ```
-  使用 `nix-env --list-generations --profile /nix/var/nix/profiles/system` 可查看所有历史版本。
