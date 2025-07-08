@@ -4,7 +4,7 @@
 {
   home.packages = with pkgs; [
     # ===== TERMINAL EMULATORS =====
-    alacritty          # GPU-accelerated terminal
+    wezterm            # GPU-accelerated terminal in Rust
 
     # ===== TERMINAL MULTIPLEXERS =====
     tmux               # Terminal multiplexer

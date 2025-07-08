@@ -33,6 +33,7 @@
       telescope-nvim
       copilot-lua
       copilot-cmp
+      auto-session # For session management
     ];
 
     extraConfig = ''
@@ -64,6 +65,10 @@
           "│ Search (Telescope)                                           │",
           "│   <leader>ff     - Find files in project                     │",
           "│   <leader>fg     - Grep for text in project                  │",
+          "│                                                              │",
+          "│ Session Management                                           │",
+          "│   <leader>ss     - Save current session                      │",
+          "│   <leader>sr     - Restore last session                      │",
           "│                                                              │",
           "│ LSP & Code Navigation (Lspsaga)                              │",
           "│   K            - Show documentation for word under cursor    │",
@@ -120,11 +125,23 @@
       map('n', '<leader>gb', '<cmd>Gitsigns blame_line<cr>', { desc = "Git Blame" })
       map('n', '<leader>cc', "<cmd>CopilotChat<cr>", { desc = "Copilot Chat" })
 
+      -- Session management
+      map('n', '<leader>ss', '<cmd>SessionSave<cr>', { desc = 'Save session' })
+      map('n', '<leader>sr', '<cmd>SessionRestore<cr>', { desc = 'Restore session' })
+
       -- ===================================================================
       -- Plugin Configurations
       -- ===================================================================
       -- Theme
       vim.cmd.colorscheme "catppuccin-mocha"
+
+      -- Auto Session (Workspace Management)
+      require('auto-session').setup({
+          log_level = 'error',
+          auto_session_enable_last_session = true,
+          auto_save_enabled = true,
+          session_dir_path = vim.fn.stdpath('data') .. "/sessions/",
+      })
 
       -- Copilot
       require("copilot").setup({

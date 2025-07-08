@@ -74,7 +74,7 @@
       "font-cascadia-code"         # Microsoft's programming font
       
       # System Integration Applications
-      "alacritty"                  # Terminal emulator (macOS integration)
+      "wezterm"                    # WezTerm terminal emulator
       
       # Optional: FelixKratz workflow apps
       # "raycast"                  # Application launcher (modern Spotlight)

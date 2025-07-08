@@ -106,8 +106,8 @@ alt - 9 : yabai -m space --focus 9
 alt - 0 : yabai -m space --focus 10
 
 # Applications
-alt - return : /Applications/Alacritty.app/Contents/MacOS/alacritty
-shift + alt - return : open -n /Applications/Alacritty.app
+alt - return : /Applications/WezTerm.app/Contents/MacOS/wezterm
+shift + alt - return : open -n /Applications/WezTerm.app
 
 # Global utilities
 alt - w : /usr/bin/osascript -e 'tell application "Finder" to activate' -e 'delay 0.2' -e 'tell application "System Events" to keystroke "g" using {command down, shift down}' # Finder Go To Folder script
