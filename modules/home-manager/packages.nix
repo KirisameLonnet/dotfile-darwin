@@ -9,6 +9,7 @@
     ./packages/media.nix       # Media processing tools
     ./packages/system.nix      # System utilities
     ./packages/terminal.nix    # Terminal and CLI tools
+    ./packages/latex.nix       # LaTeX with Chinese and Math support
   ];
 
   # Core packages that don't fit into specific categories
@@ -18,5 +19,6 @@
     wget               # File downloader
     unzip              # ZIP extractor
     p7zip              # 7-Zip archiver
+    sshfs	       # SSH Filesystem
   ];
 }
