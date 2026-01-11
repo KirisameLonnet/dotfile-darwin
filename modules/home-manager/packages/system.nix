@@ -14,9 +14,22 @@
     # Core archive tools moved to main packages.nix
 
     # ===== SYSTEM MONITORING =====
-    htop               # Process viewer
-    btop               # Modern system monitor
-    fastfetch          # System information tool
+        # System Utilities
+    htop                # Interactive process viewer
+    btop                # Modern process viewer
+    eza                 # Modern `ls` replacement
+    fd                  # Modern `find` replacement
+    ripgrep             # Modern `grep` replacement
+    fzf                 # Command-line fuzzy finder
+    unzip               # For extracting zip files
+    jq                  # JSON processor
+    
+    # Nix specific tools
+    nix-output-monitor  # For better nix build logs
+    
+    # Other
+    neofetch            # System information tool (classic)
+
 
     # ===== SECURITY =====
     gnupg              # GPG encryption

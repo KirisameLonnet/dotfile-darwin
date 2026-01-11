@@ -15,10 +15,6 @@ verify: ## Verify current configuration and services
 	@$(MAKE) info
 	@$(MAKE) test
 
-restart-services: ## Restart window manager services only
-	@echo "🔄 Restarting services..."
-	@$(MAKE) restart-all
-
 build: ## Build the nix-darwin configuration
 	@echo "🔨 Building configuration..."
 	@nix --experimental-features "nix-command flakes" build ".#darwinConfigurations.simple.system"
@@ -32,25 +28,9 @@ clean: ## Clean up nix store and build artifacts
 	@nix-collect-garbage -d
 	@rm -rf result
 
-restart-all: ## Restart all services (yabai, skhd)
-	@echo "🔄 Restarting all window manager services..."
-	@sudo launchctl kickstart -k system/org.nixos.yabai || echo "Yabai daemon restart attempted"
-	@launchctl kickstart -k gui/$$(id -u)/org.nixos.skhd || echo "skhd agent restart attempted"
-
-restart-yabai: ## Restart yabai window manager
-	@echo "🪟 Restarting yabai..."
-	@sudo launchctl kickstart -k system/org.nixos.yabai || echo "Yabai daemon restart attempted"
-
-restart-skhd: ## Restart skhd hotkey daemon
-	@echo "⌨️ Restarting skhd..."
-	@launchctl kickstart -k gui/$$(id -u)/org.nixos.skhd || echo "skhd agent restart attempted"
-
 update: ## Update flake inputs and rebuild
 	@echo "🔄 Updating flake inputs..."
 	@nix flake update
-	@$(MAKE) switch
-
-nixup: ## Quick rebuild and switch (alias for switch)
 	@$(MAKE) switch
 
 check: ## Check configuration for errors
@@ -75,15 +55,6 @@ info: ## Show system information
 	@echo "Darwin generation: $$(darwin-rebuild --version 2>/dev/null || echo 'Not installed')"
 	@echo "Homebrew version: $$(brew --version | head -1)"
 	@echo ""
-	@echo "🔧 Service Status"
-	@echo "==============="
-	@echo "yabai: $$(pgrep yabai > /dev/null && echo 'running' || echo 'stopped')"
-	@echo "skhd: $$(pgrep skhd > /dev/null && echo 'running' || echo 'stopped')"
-	@echo ""
-	@echo "🎨 Window Manager Config"
-	@echo "======================="
-	@echo "Transparency: $$(yabai -m config normal_window_opacity 2>/dev/null || echo 'N/A')"
-	@echo "Animation: $$(yabai -m config window_animation_duration 2>/dev/null || echo 'N/A')s"
 
 test: ## Test hotkeys and configuration
 	@echo "🧪 Testing Configuration"
@@ -134,34 +105,5 @@ backup: ## Create backup of current configuration
 	@echo "💾 Creating backup..."
 	@tar -czf "backup-$$(date +%Y%m%d-%H%M%S).tar.gz" --exclude="result" --exclude="*.tar.gz" .
 	@echo "Backup created: backup-$$(date +%Y%m%d-%H%M%S).tar.gz"
-
-setup-gemini: ## Setup Gemini CLI configuration (now managed by Nix)
-	@echo "🤖 Gemini CLI is now managed by Nix configuration"
-	@echo "📝 Edit ~/.gemini/.env to set your API key"
-	@echo "🔧 Run 'gemini-doctor' to check configuration"
-
-test-gemini: ## Test Gemini CLI connection
-	@echo "🧪 Testing Gemini CLI..."
-	@if [ -z "$$GEMINI_API_KEY" ]; then \
-		echo "❌ GEMINI_API_KEY not set"; \
-		exit 1; \
-	fi
-	@echo "Testing Gemini CLI via npx..."
-	@npx @google/gemini-cli "Hello, please respond with 'Test successful'" 2>/dev/null || echo "❌ Gemini CLI test failed"
-
-gemini-help: ## Show Gemini CLI usage help
-	@echo "🤖 Gemini CLI Help"
-	@echo "=================="
-	@echo "Gemini CLI is now fully integrated into Nix configuration."
-	@echo ""
-	@echo "Available commands:"
-	@echo "  gemini \"your question\"  - Quick questions"
-	@echo "  gemini -i               - Interactive mode"
-	@echo "  gemini-quick            - With environment loading"
-	@echo "  gemini-doctor           - Health check and diagnostics"
-	@echo ""
-	@echo "Configuration:"
-	@echo "  ~/.gemini/.env          - API key configuration"
-	@echo "  ~/.gemini/settings.json - Gemini CLI settings"
 
 .PHONY: help install build switch clean restart-all restart-yabai restart-skhd restart-sketchybar update nixup check format permissions info test status logs backup setup-gemini test-gemini gemini-help

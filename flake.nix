@@ -21,6 +21,7 @@
     pkgsConfig = {
       allowUnfree = true;
       overlays = [
+
         # Custom overlay for window management tools
         (final: prev: {
           # Use the latest yabai from nixpkgs
@@ -31,6 +32,9 @@
           # sketchybar-placeholder = prev.writeShellScriptBin "sketchybar" ''
           #   echo "SketchyBar managed by homebrew"
           # '';
+
+          # Pin mitmproxy to python3.12 to avoid dependency issues
+          mitmproxy = prev.mitmproxy.override { python = prev.python312; };
         })
       ];
     };

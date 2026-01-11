@@ -13,5 +13,6 @@
     python3Packages.virtualenv
     python3Packages.numpy
     python3Packages.pandas
+    python313Packages.uv
   ];
 }

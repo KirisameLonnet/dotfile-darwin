@@ -38,12 +38,8 @@
     yabai = {
       enable = true;
       package = pkgs.yabai;
-      # 使用外部 yabairc 文件，避免重复配置
-      # 基础配置已经在 config/yabai/yabairc 中定义
-      extraConfig = ''
-        # 只在这里处理 Nix 特定的启动逻辑
-        echo "yabai service managed by nix-darwin, configuration loaded from yabairc"
-      '';
+      # 加载外部 yabairc 配置文件
+      extraConfig = builtins.readFile ../../config/yabai/yabairc;
     };
 
     skhd = {

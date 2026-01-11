@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 
 {
+  home.sessionPath = [
+    "$HOME/.local/bin"
+  ];
+
   # Shell configuration
   programs.zsh = {
     enable = true;
@@ -162,58 +166,110 @@
   programs.starship = {
     enable = true;
     settings = {
-      format = "$all$character";
-      right_format = "$time";
-      
-      character = {
-        success_symbol = "[➜](bold green)";
-        error_symbol = "[➜](bold red)";
-      };
-      
-      time = {
+      # Use a two-line prompt structure with a connecting line
+      format = ''
+        ╭─$os$hostname$directory$git_branch$git_status
+        ╰─$character'';
+
+      # Hide the time from the right format for a cleaner look
+      right_format = "$cmd_duration";
+
+      # General settings
+      add_newline = true;
+
+      # OS Module
+      os = {
+        format = "[$symbol]($style)";
+        style = "bold blue";
         disabled = false;
-        format = "[$time]($style)";
-        style = "bright-blue";
       };
-      
+      os.symbols = {
+        Macos = "󰀵 ";
+      };
+
+      # Hostname module (only shown when on remote machine)
+      hostname = {
+        ssh_only = true;
+        format = "on [$hostname]($style) ";
+        style = "bold yellow";
+        disabled = false;
+      };
+
+      # Directory Module with custom symbols and colors
       directory = {
+        format = "in [$path]($style)[$read_only]($read_only_style) ";
         truncation_length = 3;
         truncation_symbol = "…/";
         style = "bold cyan";
+        read_only = " 🔒";
+        read_only_style = "red";
       };
-      
+
+      # Git Branch Module with custom symbol
       git_branch = {
-        symbol = " ";
+        symbol = " ";
+        format = "on [$symbol$branch]($style) ";
         style = "bold purple";
       };
-      
+
+      # Git Status Module with detailed symbols
       git_status = {
+        format = "([$all_status$ahead_behind]($style))";
+        style = "bold yellow";
+        conflicted = " ";
+        ahead = " ";
+        behind = " ";
+        diverged = " ";
+        untracked = " ";
+        stashed = " 󰏖";
+        modified = " ";
+        staged = " ";
+        renamed = "     renaming";
+        deleted = " 🗑";
+      };
+
+      # Command Duration Module (only shows for slow commands)
+      cmd_duration = {
+        min_time = 2000; # 2 seconds
+        format = "took [$duration]($style) ⏳";
         style = "bold yellow";
       };
-      
+
+      # Character Module (the prompt symbol)
+      character = {
+        success_symbol = "[❯](bold green)";
+        error_symbol = "[❯](bold red)";
+        vimcmd_symbol = "[❮](bold green)";
+        vimcmd_replace_one_symbol = "[❮](bold purple)";
+        vimcmd_replace_symbol = "[❮](bold purple)";
+        vimcmd_visual_symbol = "[❮](bold yellow)";
+      };
+
+      # Language-specific modules with Nerd Font icons
       nodejs = {
-        symbol = " ";
+        symbol = " ";
         style = "bold green";
+        format = "via [$symbol($version)]($style) ";
       };
-      
       python = {
-        symbol = " ";
+        symbol = " ";
         style = "bold yellow";
+        format = "via [$symbol($version)]($style) ";
       };
-      
       rust = {
-        symbol = " ";
+        symbol = " ";
         style = "bold orange";
+        format = "via [$symbol($version)]($style) ";
       };
-      
-      package = {
-        symbol = " ";
-        style = "bold red";
-      };
-      
       nix_shell = {
-        symbol = " ";
+        symbol = " ";
         style = "bold blue";
+        format = "in [$symbol$state]($style) ";
+      };
+      package = {
+        symbol = "󰏗 ";
+        style = "bold red";
+        format = "[$symbol$version]($style) ";
       };
     };
   };

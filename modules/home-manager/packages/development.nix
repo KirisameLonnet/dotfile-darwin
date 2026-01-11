@@ -13,6 +13,7 @@
     gnumake            # Make build tool
     cmake              # Cross-platform build tool
     pkg-config         # Package configuration
+    android-tools      # Android Debug Bridge (ADB)
 
     # ===== CODE QUALITY =====
     nil                # Nix language server
@@ -27,9 +28,17 @@
     # ===== DATABASE TOOLS =====
     sqlite             # SQLite database
 
+    # ===== NETWORK TOOLS =====
+    mitmproxy          # Interactive TUI proxy
+
+    # ===== VIRTUALIZATION =====
+    qemu               # Machine emulator and virtualizer
+    lima               # Linux virtual machines
+
     # ===== PROGRAMMING LANGUAGES =====
     rustc              # Rust compiler
     cargo              # Rust package manager
     go                 # Go programming language
+    pipx               # Install and run Python applications in isolated environments
   ];
 }

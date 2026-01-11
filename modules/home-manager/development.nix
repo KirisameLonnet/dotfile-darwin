@@ -7,10 +7,10 @@
   # Git configuration
   programs.git = {
     enable = true;
-    userName = "lonnetkirisame";
-    userEmail = "your-email@example.com";
+    settings.user.name = "lonnetkirisame";
+    settings.user.email = "szfsy06@gmail.com";
     
-    extraConfig = {
+    settings = {
       init.defaultBranch = "main";
       core = {
         editor = "nvim";
@@ -37,7 +37,7 @@
       };
     };
     
-    aliases = {
+    settings.alias = {
       # Short commands
       st = "status";
       co = "checkout";

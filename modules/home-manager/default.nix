@@ -11,6 +11,7 @@
     ./envdir.nix
     ./editor/nvim.nix
     ./gemini.nix              # Gemini CLI configuration
+    ./fastfetch.nix           # Custom fastfetch configuration
   ];
 
   # Basic home manager configuration
