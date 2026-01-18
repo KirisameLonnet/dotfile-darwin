@@ -94,7 +94,7 @@
       StandardHideDesktopIcons = true;
       HideDesktop = false;  # 临时启用，避免影响系统设置
       StageManagerHideWidgets = true;
-      GloballyEnabled = true;  # 临时启用，避免影响系统设置
+      GloballyEnabled = false;  # 禁用 Stage Manager，避免与 yabai 冲突
     };
     
     spaces = {

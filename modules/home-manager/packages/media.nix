@@ -8,5 +8,6 @@
 
     # ===== VIDEO/AUDIO PROCESSING =====
     ffmpeg             # Media processing
+
   ];
 }

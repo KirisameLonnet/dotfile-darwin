@@ -114,3 +114,13 @@ alt - w : /usr/bin/osascript -e 'tell application "Finder" to activate' -e 'dela
 
 # cmd - space : 系统原生 Spotlight 快捷键，不被 skhd 拦截
 # alt - space : open -n /Applications/Raycast.app  # DISABLED: Replaced with Spotlight
+
+# Center floating window (grid 4:4 center 2x2)
+shift + alt - c : yabai -m window --grid 4:4:1:1:2:2
+
+# Quick switch to recent space
+alt - tab : yabai -m space --focus recent
+
+# Stack navigation (for stack layout mode)
+alt - n : yabai -m window --focus stack.next || yabai -m window --focus stack.first
+alt - b : yabai -m window --focus stack.prev || yabai -m window --focus stack.last

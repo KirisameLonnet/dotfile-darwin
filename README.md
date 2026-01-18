@@ -49,10 +49,6 @@
 | `make switch` | **(最常用)** 构建并应用新配置。对配置的任何更改都通过此命令生效。 |
 | `make build` | 仅构建配置，不激活。用于在应用前检查配置是否存在错误。 |
 | `make update` | 更新所有 Nix Flake 依赖 (如 nixpkgs) 到最新版本，并应用新配置。 |
-| **服务管理** | |
-| `make restart-all` | 重启所有窗口管理器相关的服务 (`yabai`, `skhd`)。 |
-| `make restart-yabai` | 只重启 `yabai` 服务。 |
-| `make restart-skhd` | 只重启 `skhd` 服务。 |
 | **诊断与维护** | |
 | `make status` | 显示详细的系统状态，包括服务运行状态和配置文件检查。 |
 | `make logs` | 显示 `yabai` 和 `skhd` 的最新日志，用于排查问题。 |
@@ -60,7 +56,7 @@
 | `make clean` | 清理旧的 Nix Store generations 和构建产物，释放磁盘空间。 |
 | `make format` | 格式化项目中的所有 `.nix` 文件。 |
 | `make help` | 显示所有可用的 `make` 命令及其描述。 |
-
+ 
 </details>
 
 ## 🛠️ 已安装工具与别名

@@ -2,12 +2,12 @@
 
 # Default target
 help: ## Show this help message
-	@echo "🍎 macOS Rice Configuration"
+	@echo "macOS Rice Configuration"
 	@echo "=========================="
 	@awk 'BEGIN {FS = ":.*##"} /^[a-zA-Z_-]+:.*##/ {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 install: ## Full installation (build + switch)
-	@echo "🚀 Starting full installation..."
+	@echo "Starting full installation..."
 	@$(MAKE) switch
 
 verify: ## Verify current configuration and services
