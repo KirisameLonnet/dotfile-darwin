@@ -74,7 +74,6 @@
       "font-cascadia-code"         # Microsoft's programming font
       
       # System Integration Applications
-      "docker"                     # Docker Desktop for Mac
       "wezterm"                    # WezTerm terminal emulator
       
       # Optional: FelixKratz workflow apps
