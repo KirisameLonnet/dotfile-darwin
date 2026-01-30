@@ -23,6 +23,14 @@ switch: build ## Build and switch to new configuration
 	@echo "🔄 Switching to new configuration..."
 	@sudo ./result/sw/bin/darwin-rebuild switch --flake .#simple
 
+build-fallback: ## Build with fallback (builds from source if cache fails)
+	@echo "🔨 Building configuration (with fallback)..."
+	@nix --experimental-features "nix-command flakes" build ".#darwinConfigurations.simple.system" --fallback
+
+switch-fallback: build-fallback ## Build and switch with fallback
+	@echo "🔄 Switching to new configuration..."
+	@sudo ./result/sw/bin/darwin-rebuild switch --flake .#simple
+
 clean: ## Clean up nix store and build artifacts
 	@echo "🧹 Cleaning up..."
 	@nix-collect-garbage -d

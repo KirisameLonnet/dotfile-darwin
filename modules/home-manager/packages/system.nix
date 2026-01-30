@@ -9,6 +9,7 @@
     gnused             # GNU sed
     gawk               # GNU awk
     gnugrep            # GNU grep
+    libxkbcommon       # XKB keymap handling library
 
     # ===== ARCHIVE AND COMPRESSION =====
     # Core archive tools moved to main packages.nix

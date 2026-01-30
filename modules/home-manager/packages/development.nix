@@ -40,5 +40,9 @@
     cargo              # Rust package manager
     go                 # Go programming language
     pipx               # Install and run Python applications in isolated environments
+
+    # ===== LATEX AND TYPESETTING =====
+    texlive.combined.scheme-full    # Full TeX Live distribution
+    texlab             # LaTeX language server
   ];
 }

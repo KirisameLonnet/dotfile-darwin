@@ -52,6 +52,7 @@
       
       # Additional Development Tools
       "tree-sitter"                 # Parser generator for syntax highlighting
+      "libxkbcommon"               # Keyboard handling library (Wayland/XKB)
       
       # Note: fnnn is available through nix, no need for homebrew HEAD install
     ];
@@ -75,6 +76,7 @@
       
       # System Integration Applications
       "wezterm"                    # WezTerm terminal emulator
+      "orbstack"                   # OrbStack container runtime
       
       # Optional: FelixKratz workflow apps
       # "raycast"                  # Application launcher (modern Spotlight)
@@ -83,7 +85,7 @@
       
       # Media & Productivity (optional)
       # "spotify"                  # Music streaming
-      # "discord"                  # Communication
+      "vesktop"                   # Discord alternative (stable app path for macOS permissions)
       # "notion"                   # Note-taking
     ];
     

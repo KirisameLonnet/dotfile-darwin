@@ -9,5 +9,8 @@
     # ===== VIDEO/AUDIO PROCESSING =====
     ffmpeg             # Media processing
 
+    # ===== COMMUNICATION =====
+    # vesktop         # Discord alternative (moved to Homebrew cask for stable app path)
+
   ];
 }
