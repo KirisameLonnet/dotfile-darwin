@@ -4,7 +4,7 @@
 {
   home.packages = with pkgs; [
     # ===== TERMINAL EMULATORS =====
-    wezterm            # GPU-accelerated terminal in Rust
+    # kitty is installed via homebrew cask for better macOS integration
 
     # ===== TERMINAL MULTIPLEXERS =====
     tmux               # Terminal multiplexer

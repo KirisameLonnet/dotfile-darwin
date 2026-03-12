@@ -70,7 +70,7 @@
 
 | 类别 | 工具 | 描述 |
 | :--- | :--- | :--- |
-| **终端与 Shell** | `wezterm`, `zsh`, `starship` | 终端、Shell 及提示符 |
+| **终端与 Shell** | `kitty`, `zsh`, `starship` | 终端、Shell 及提示符 |
 | | `tmux`, `zellij` | 终端复用器 |
 | | `eza`, `bat`, `ripgrep`, `fd` | `ls`, `cat`, `grep`, `find` 的现代替代品 |
 | **开发工具** | `neovim` | 高度可扩展的文本编辑器 |
@@ -118,7 +118,7 @@
 - `Alt + E`: 切换窗口分割方向 (水平/垂直)
 
 ### 应用与系统
-- `Alt + Return`: 打开 WezTerm 终端
+- `Alt + Return`: 打开 Kitty 终端
 - `Shift + Ctrl + Alt + R`: 重启 Yabai 服务
 
 </details>

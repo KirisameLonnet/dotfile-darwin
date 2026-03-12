@@ -1,94 +1,84 @@
 { config, pkgs, ... }:
 
 {
-  # WezTerm terminal configuration (visually mirrors Alacritty)
-  programs.wezterm = {
+  # Kitty terminal configuration (modern, fast, GPU-accelerated)
+  programs.kitty = {
     enable = true;
+    font = {
+      name = "JetBrainsMono Nerd Font";
+      size = 14;
+    };
+    settings = {
+      # Performance
+      input_delay = 0;
+      repaint_delay = 8;
+      sync_to_monitor = "yes";
+
+      # Window Configuration
+      window_padding_width = 20;
+      background_opacity = "0.8";
+      dynamic_background_opacity = "yes";
+      macos_titlebar_color = "background";
+      hide_window_decorations = "titlebar-only";
+
+      # Tab Bar
+      tab_bar_min_tabs = 2;
+      tab_bar_style = "fade";
+
+      # Background Blur (MacOS)
+      background_blur = 32;
+
+      # Cursor
+      cursor_shape = "block";
+      cursor_blink_interval = "0.5";
+      # Smooth Cursor / Cursor Trail (requires Kitty 0.35+)
+      cursor_trail = 1;
+      cursor_trail_decay = "0.1 0.4";
+      cursor_trail_start_threshold = 2;
+
+      # Mouse
+      focus_follows_mouse = "no";
+      mouse_hide_wait = "3.0";
+
+      # Colors (Catppuccin Mocha)
+      background = "#1e1e2e";
+      foreground = "#cdd6f4";
+      selection_background = "#f5e0dc";
+      selection_foreground = "#1e1e2e";
+      cursor = "#f5e0dc";
+      cursor_text_color = "#1e1e2e";
+
+      # black
+      color0 = "#45475a";
+      color8 = "#585b70";
+      # red
+      color1 = "#f38ba8";
+      color9 = "#f38ba8";
+      # green
+      color2 = "#a6e3a1";
+      color10 = "#a6e3a1";
+      # yellow
+      color3 = "#f9e2af";
+      color11 = "#f9e2af";
+      # blue
+      color4 = "#89b4fa";
+      color12 = "#89b4fa";
+      # magenta
+      color5 = "#f5c2e7";
+      color13 = "#f5c2e7";
+      # cyan
+      color6 = "#94e2d5";
+      color14 = "#94e2d5";
+      # white
+      color7 = "#bac2de";
+      color15 = "#a6adc8";
+    };
     extraConfig = ''
-      local wezterm = require 'wezterm'
-      local config = {}
-
-      -- Use config_builder if available, otherwise fall back to the config table
-      if wezterm.config_builder then
-        config = wezterm.config_builder()
-      end
-
-      -- Window Configuration (matching Alacritty)
-      config.window_decorations = "RESIZE" -- Similar to buttonless, allows resizing
-      config.window_background_opacity = 0.8
-      config.macos_window_background_blur = 20 -- Similar to Alacritty's blur
-      config.window_padding = {
-        left = 20,
-        right = 20,
-        top = 20,
-        bottom = 20,
-      }
-      config.initial_cols = 120
-      config.initial_rows = 40
-      config.enable_tab_bar = false -- Hides the tab bar for a minimal look
-
-      -- Font Configuration (matching Alacritty)
-      config.font = wezterm.font_with_fallback({
-        { family = "JetBrainsMono Nerd Font", weight = "Regular" },
-        { family = "Apple Color Emoji" }, -- Fallback for emojis
-      })
-      config.font_size = 14.0
-
-      -- Catppuccin Mocha Color Scheme (matching Alacritty)
-      config.colors = {
-        background = '#1e1e2e',
-        foreground = '#cdd6f4',
-
-        cursor_bg = '#f5e0dc',
-        cursor_border = '#f5e0dc',
-        cursor_fg = '#1e1e2e',
-
-        selection_bg = '#f5e0dc',
-        selection_fg = '#1e1e2e',
-
-        ansi = {
-          '#45475a', -- Black
-          '#f38ba8', -- Red
-          '#a6e3a1', -- Green
-          '#f9e2af', -- Yellow
-          '#89b4fa', -- Blue
-          '#f5c2e7', -- Magenta
-          '#94e2d5', -- Cyan
-          '#bac2de', -- White
-        },
-        brights = {
-          '#585b70', -- Bright Black
-          '#f38ba8', -- Bright Red
-          '#a6e3a1', -- Bright Green
-          '#f9e2af', -- Bright Yellow
-          '#89b4fa', -- Bright Blue
-          '#f5c2e7', -- Bright Magenta
-          '#94e2d5', -- Bright Cyan
-          '#a6adc8', -- Bright White
-        },
-      }
-
-      -- Cursor Configuration (matching Alacritty)
-      config.default_cursor_style = 'BlinkingBlock'
-      config.cursor_blink_rate = 500
-
-      -- Scrolling Configuration
-      config.scrollback_lines = 10000
-
-      -- Mouse Configuration
-      config.hide_mouse_cursor_when_typing = true
-
-      -- Key Bindings (WezTerm uses different defaults, these are for reference)
-      -- Most Cmd+C, Cmd+V, etc. work out of the box on macOS.
-      -- config.keys = { ... }
-
-      -- Shell Configuration (WezTerm will inherit the default shell from your environment)
-      -- config.default_prog = { '${pkgs.zsh}/bin/zsh', '--login' }
-
-      return config
+      # MacOS specific
+      macos_option_as_alt yes
+      macos_quit_when_last_window_closed yes
     '';
   };
   
   # Note: Starship prompt is configured in shell.nix to avoid duplication
 }
-

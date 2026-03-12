@@ -20,5 +20,6 @@
     p7zip              # 7-Zip archiver
     sshfs	       # SSH Filesystem
     nexttrace
+    mosh
   ];
 }

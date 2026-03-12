@@ -49,23 +49,6 @@
     };
   };
 
-  # 用户会话服务的 LaunchAgents  
-  launchd.agents = {
-    skhd = {
-      serviceConfig = {
-        ProgramArguments = [ "${pkgs.skhd}/bin/skhd" "-c" "/etc/skhdrc" ];
-        KeepAlive = true;
-        RunAtLoad = true;
-        ProcessType = "Interactive";
-        StandardOutPath = "/tmp/skhd.out.log";
-        StandardErrorPath = "/tmp/skhd.err.log";
-        EnvironmentVariables = {
-          PATH = "${pkgs.skhd}/bin:${config.environment.systemPath}";
-        };
-      };
-    };
-  };
-
   # 激活后脚本，确保服务正确启动
   system.activationScripts.postActivation.text = ''
     # 确保 yabai 拥有必要权限并正确启动

@@ -41,6 +41,8 @@
       top = "btop";
       vim = "nvim";
       v = "nvim";
+      ssh = "kitten ssh";
+      icat = "kitten icat";
       
       # Navigation
       ".." = "cd ..";
@@ -62,10 +64,11 @@
       gs = "git status";
       
       # System management
-      nixup = "darwin-rebuild switch --flake ~/.config/nixconfig";
-      nixcheck = "nix flake check ~/.config/nixconfig";
-      nixbuild = "nix build ~/.config/nixconfig#darwinConfigurations.simple.system";
+      nixup = "sudo darwin-rebuild switch --flake ~/nixconfig";
+      nixcheck = "nix flake check ~/nixconfig";
+      nixbuild = "nix build ~/nixconfig#darwinConfigurations.simple.system";
       reload = "source ~/.zshrc";
+      sudo = "sudo ";
       
       # Modern setup script aliases
       setup = "./quick-setup.sh";

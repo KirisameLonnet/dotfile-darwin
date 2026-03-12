@@ -75,8 +75,10 @@
       "font-cascadia-code"         # Microsoft's programming font
       
       # System Integration Applications
-      "wezterm"                    # WezTerm terminal emulator
+      "kitty"                      # Kitty terminal emulator
+      "jetbrains-gateway"          # JetBrains Gateway for remote development
       "orbstack"                   # OrbStack container runtime
+      "marta"                      # File manager replacement options
       
       # Optional: FelixKratz workflow apps
       # "raycast"                  # Application launcher (modern Spotlight)

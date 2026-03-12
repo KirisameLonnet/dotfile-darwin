@@ -141,6 +141,7 @@
           auto_session_enable_last_session = true,
           auto_save_enabled = true,
           session_dir_path = vim.fn.stdpath('data') .. "/sessions/",
+          pre_save_cmds = { "Neotree close" },
       })
 
       -- Copilot
@@ -192,7 +193,33 @@
 
       -- Neo-tree (File Explorer)
       require('neo-tree').setup({
-        window = { mappings = { ["<space>"] = "none" } }
+        close_if_last_window = true,
+        auto_clean_after_session_restore = true,
+        window = { mappings = { ["<space>"] = "none" } },
+        filesystem = {
+          hijack_netrw_behavior = "open_default",
+          use_libuv_file_watcher = true,
+        },
+        event_handlers = {
+          {
+            event = "neo_tree_buffer_leave",
+            handler = function()
+              -- Identify all currently visible buffers
+              local shown_buffers = {}
+              for _, win in ipairs(vim.api.nvim_list_wins()) do
+                shown_buffers[vim.api.nvim_win_get_buf(win)] = true
+              end
+              -- Delete any neo-tree buffers that are not currently visible
+              for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                if not shown_buffers[buf] and
+                   vim.api.nvim_buf_get_option(buf, 'buftype') == 'nofile' and
+                   vim.api.nvim_buf_get_option(buf, 'filetype') == 'neo-tree' then
+                  vim.api.nvim_buf_delete(buf, { force = true })
+                end
+              end
+            end
+          },
+        }
       })
 
       -- Telescope (Fuzzy Finder)
