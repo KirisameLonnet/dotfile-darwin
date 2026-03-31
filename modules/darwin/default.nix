@@ -5,6 +5,7 @@
     ./system.nix
     ./fonts.nix
     ./homebrew.nix
+    ./lan-mouse.nix
     ./window-manager.nix
   ];
 

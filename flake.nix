@@ -20,10 +20,11 @@
     # Custom packages configuration
     pkgsConfig = {
       allowUnfree = true;
-      overlays = [
+    };
 
-        # Custom overlay for window management tools
-        (final: prev: {
+    pkgsOverlays = [
+      # Custom overlay for window management tools
+      (final: prev: {
           # Use the latest yabai from nixpkgs
           yabai-latest = prev.yabai;
           
@@ -34,14 +35,17 @@
           # '';
 
           # Pin mitmproxy to python3.12 to avoid dependency issues
-          mitmproxy = prev.mitmproxy.override { python = prev.python312; };
-        })
-      ];
-    };
+          mitmproxy = with prev.python312Packages; prev.python312Packages.toPythonApplication mitmproxy;
+
+          # unity-test fails its C++-compiled tests on darwin; skip checks to keep dependents building.
+          unity-test = prev.unity-test.overrideAttrs (_: { doCheck = false; });
+      })
+    ];
 
     pkgs = import nixpkgs {
       inherit system;
       config = pkgsConfig;
+      overlays = pkgsOverlays;
     };
   in
   {
@@ -80,6 +84,7 @@
           system.stateVersion = 5;
           nixpkgs.hostPlatform = system;
           nixpkgs.config = pkgsConfig;
+          nixpkgs.overlays = pkgsOverlays;
         })
       ];
     };

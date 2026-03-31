@@ -30,7 +30,7 @@
     
     # Other
     neofetch            # System information tool (classic)
-
+    cava
 
     # ===== SECURITY =====
     gnupg              # GPG encryption
@@ -42,5 +42,6 @@
     # ===== MACOS SPECIFIC =====
     mas                # Mac App Store CLI
     m-cli              # macOS management CLI
-  ];
+    input-leap
+];
 }
