@@ -29,7 +29,7 @@
     nix-output-monitor  # For better nix build logs
     
     # Other
-    neofetch            # System information tool (classic)
+    fastfetch           # System information tool (modern neofetch replacement)
     cava
 
     # ===== SECURITY =====

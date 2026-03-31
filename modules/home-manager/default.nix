@@ -23,4 +23,11 @@
 
   # Let Home Manager install and manage itself
   programs.home-manager.enable = true;
+
+  home.file.".config/lan-mouse/config.toml".text = ''
+    [[clients]]
+    position = "left"
+    ips = ["192.168.1.176"]
+    port = 4242
+  '';
 }

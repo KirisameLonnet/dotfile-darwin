@@ -19,7 +19,7 @@
     # Global homebrew settings optimized for Nix management
     global = {
       brewfile = true;              # Generate Brewfile for compatibility
-      lockfiles = false;            # Nix handles version pinning
+
       autoUpdate = false;           # Disable homebrew's auto-update
     };
     
@@ -101,7 +101,7 @@
   # Environment integration - make homebrew tools available but secondary to nix
   environment.systemPath = [
     # Note: homebrew is added AFTER nix paths to give nix packages priority
-    config.homebrew.brewPrefix
+    "${config.homebrew.prefix}/bin"
   ];
   
   # Security and privacy settings for homebrew

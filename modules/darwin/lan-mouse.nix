@@ -57,7 +57,21 @@ in
     lanMouseWrapper
   ];
 
-  system.activationScripts.lanMouseApp.text = ''
+  launchd.user.agents.lan-mouse = {
+    serviceConfig = {
+      ProgramArguments = [
+        "/run/current-system/sw/bin/lan-mouse"
+        "--frontend"
+        "cli"
+      ];
+      EnvironmentVariables = {
+        XDG_CONFIG_HOME = "/Users/lonnetkirisame/.config";
+      };
+      RunAtLoad = true;
+    };
+  };
+
+  system.activationScripts.postActivation.text = lib.mkAfter ''
     app_src="${lanMouseApp}/Applications/${appName}.app"
     app_dst="${appPath}"
 
