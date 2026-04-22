@@ -18,6 +18,7 @@
       EDITOR = "nvim";
       VISUAL = "nvim";
       GIT_EDITOR = "nvim";
+      MINIMAX_API_KEY = "sk-cp-iBkj29UkMd5tkHdaHCJMQh_olMUC0lPCQ_7Ic2LvfNmFh6BAbbKc3L_T6oGvOZqVuY9aqGmVcQ1cxd1_otHsjPtgXFioQxwHFzVdPVqk5ZvobA9ygtcCTUM";
       
       # Suppress macOS input method and keyboard logs
       OS_ACTIVITY_MODE = "disable";
@@ -27,7 +28,6 @@
       TSM_DISABLE_LOG = "1";
       
       # Gemini CLI Configuration
-      # Configuration is now managed by gemini.nix module
       # API key should be set in ~/.gemini/.env file
     };
     
@@ -86,8 +86,10 @@
       borders = "borders";                          # JankyBorders control
       restart-wm = "brew services restart yabai && brew services restart skhd && brew services restart borders";  # SketchyBar removed
       
-      # AI/ML Tools aliases  
-      # Gemini CLI aliases are now managed by gemini.nix module
+      # AI/ML Tools aliases
+      gemini = "npx @google/gemini-cli";
+      gm = "npx @google/gemini-cli";
+      gemini-chat = "npx @google/gemini-cli -i";
     };
     
     initContent = ''
@@ -158,10 +160,10 @@
         source "$HOME/.config/fnnn/config.sh"
       fi
       
-      # Enhanced path for FelixKratz tools
-      export PATH="/opt/homebrew/bin:$PATH"
+      # Keep user-local tools ahead of Homebrew so npm-installed CLIs can override stale casks/formulas.
+      export PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
       
-      # Gemini CLI helper functions are now managed by gemini.nix module
+      # Gemini CLI can be configured via ~/.gemini/.env
     '';
   };
 

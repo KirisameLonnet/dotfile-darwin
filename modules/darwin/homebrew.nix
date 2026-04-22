@@ -77,8 +77,9 @@
       # System Integration Applications
       "kitty"                      # Kitty terminal emulator
       "jetbrains-gateway"          # JetBrains Gateway for remote development
-      "orbstack"                   # OrbStack container runtime
       "marta"                      # File manager replacement options
+      "xquartz"                    # X11 server for macOS (X11 forwarding)
+      "microsoft-remote-desktop"   # RDP client for xRDP/Windows connections
       
       # Optional: FelixKratz workflow apps
       # "raycast"                  # Application launcher (modern Spotlight)
@@ -88,6 +89,7 @@
       # Media & Productivity (optional)
       # "spotify"                  # Music streaming
       "vesktop"                   # Discord alternative (stable app path for macOS permissions)
+      "flutter"                    # Flutter SDK for cross-platform development		
       # "notion"                   # Note-taking
     ];
     
