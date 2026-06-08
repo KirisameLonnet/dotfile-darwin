@@ -4,7 +4,7 @@
 {
   home.packages = with pkgs; [
     # ===== TERMINAL EMULATORS =====
-    # kitty is installed via homebrew cask for better macOS integration
+    # kitty is managed by programs.kitty in ../terminal.nix
 
     # ===== TERMINAL MULTIPLEXERS =====
     tmux               # Terminal multiplexer

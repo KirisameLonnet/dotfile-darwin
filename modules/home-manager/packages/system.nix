@@ -37,7 +37,6 @@
 
     # ===== NIX TOOLS =====
     nix-tree           # Dependency visualization
-    home-manager       # Home Manager CLI tool
 
     # ===== MACOS SPECIFIC =====
     mas                # Mac App Store CLI

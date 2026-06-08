@@ -1,5 +1,9 @@
 # macOS Rice Configuration Makefile
 
+# Determinate Nix on macOS can trip over store optimisation hard-link races.
+# Disable auto-optimise for interactive repo commands to keep builds reliable.
+NIX := nix --experimental-features "nix-command flakes" --option auto-optimise-store false
+
 # Default target
 help: ## Show this help message
 	@echo "macOS Rice Configuration"
@@ -17,7 +21,7 @@ verify: ## Verify current configuration and services
 
 build: ## Build the nix-darwin configuration
 	@echo "🔨 Building configuration..."
-	@nix --experimental-features "nix-command flakes" build ".#darwinConfigurations.simple.system"
+	@$(NIX) build ".#darwinConfigurations.simple.system"
 
 switch: build ## Build and switch to new configuration
 	@echo "🔄 Switching to new configuration..."
@@ -25,7 +29,7 @@ switch: build ## Build and switch to new configuration
 
 build-fallback: ## Build with fallback (builds from source if cache fails)
 	@echo "🔨 Building configuration (with fallback)..."
-	@nix --experimental-features "nix-command flakes" build ".#darwinConfigurations.simple.system" --fallback
+	@$(NIX) build ".#darwinConfigurations.simple.system" --fallback
 
 switch-fallback: build-fallback ## Build and switch with fallback
 	@echo "🔄 Switching to new configuration..."
@@ -38,12 +42,12 @@ clean: ## Clean up nix store and build artifacts
 
 update: ## Update flake inputs and rebuild
 	@echo "🔄 Updating flake inputs..."
-	@nix flake update
-	@$(MAKE) switch
+	@$(NIX) flake update
+	@$(MAKE) switch-fallback
 
 check: ## Check configuration for errors
 	@echo "🔍 Checking configuration..."
-	@nix --experimental-features "nix-command flakes" flake check
+	@$(NIX) flake check
 
 format: ## Format nix files
 	@echo "🎨 Formatting nix files..."

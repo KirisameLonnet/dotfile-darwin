@@ -48,7 +48,7 @@
 | **核心命令** | |
 | `make switch` | **(最常用)** 构建并应用新配置。对配置的任何更改都通过此命令生效。 |
 | `make build` | 仅构建配置，不激活。用于在应用前检查配置是否存在错误。 |
-| `make update` | 更新所有 Nix Flake 依赖 (如 nixpkgs) 到最新版本，并应用新配置。 |
+| `make update` | 更新所有 Nix Flake 依赖 (如 nixpkgs) 到最新版本，并应用新配置。此流程会自动关闭本次命令的 store optimisation，并在缓存失效时回退到源码构建。 |
 | **诊断与维护** | |
 | `make status` | 显示详细的系统状态，包括服务运行状态和配置文件检查。 |
 | `make logs` | 显示 `yabai` 和 `skhd` 的最新日志，用于排查问题。 |
@@ -58,6 +58,12 @@
 | `make help` | 显示所有可用的 `make` 命令及其描述。 |
  
 </details>
+
+## Determinate Nix 备注
+
+此仓库当前在 `modules/darwin/system.nix` 中设置了 `nix.enable = false`，以兼容 Determinate Nix。这意味着仓库里的 `nix.settings.*` 不一定会直接改到正在运行的 daemon 配置；实际生效的全局配置仍以 `/etc/nix/nix.conf` 和 `/etc/nix/nix.custom.conf` 为准。
+
+如果遇到类似 `filesystem error: in create_hard_link: File exists` 的报错，通常是 Determinate Nix / macOS 上 `auto-optimise-store` 与 `/nix/store/.links` 的已知冲突。仓库内的 `make build` / `make update` 已经会为当前命令临时关闭该选项，但系统级设置若仍保留 `auto-optimise-store = true`，你在仓库外单独执行其他 `nix` 命令时仍可能再次触发同类问题。
 
 ## 🛠️ 已安装工具与别名
 
@@ -148,5 +154,4 @@
 - **添加软件包**: 编辑 `modules/home-manager/packages/` 或 `modules/darwin/homebrew.nix`，然后运行 `make switch`。
 - **修改快捷键**: 编辑 `config/skhd/skhdrc`，然后运行 `make restart-skhd` 或 `make switch`。
 - **修改 Neovim**: 编辑 `modules/home-manager/editor/nvim.nix`，然后运行 `make switch`.
-
 

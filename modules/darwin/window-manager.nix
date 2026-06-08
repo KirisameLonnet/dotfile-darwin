@@ -49,27 +49,6 @@
     };
   };
 
-  # 激活后脚本，确保服务正确启动
-  system.activationScripts.postActivation.text = ''
-    # 确保 yabai 拥有必要权限并正确启动
-    if command -v yabai >/dev/null 2>&1; then
-      echo "yabai found, ensuring proper configuration..."
-      # 杀死任何现有的 yabai 进程以防止冲突
-      pkill -f yabai || true
-      sleep 1
-    fi
-    
-    # 确保 skhd 正确启动
-    if command -v skhd >/dev/null 2>&1; then
-      echo "skhd found, ensuring proper configuration..."
-      # 杀死任何现有的 skhd 进程以防止冲突
-      pkill -f skhd || true
-      sleep 1
-    fi
-    
-    echo "Window manager services configured for nix-darwin management"
-  '';
-
   # 增强的窗口管理默认设置
   system.defaults = {
     WindowManager = {

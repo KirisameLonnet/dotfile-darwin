@@ -4,9 +4,10 @@
 {
   home.packages = with pkgs; [
     # Node.js (required for Gemini CLI & Copilot Agent)
-    nodejs_24              # LTS Node.js
+    nodejs_26              # Node.js v26
     github-copilot-cli     # Copilot Agent for @workspace support
     codex                  # OpenAI Codex CLI - lightweight AI coding agent
+    claude-code            # Anthropic Claude Code CLI
     
     # Python AI/ML ecosystem
     python3

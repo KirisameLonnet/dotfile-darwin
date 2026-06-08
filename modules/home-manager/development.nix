@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Development-specific configurations and specialized tools
@@ -7,6 +7,7 @@
   # Git configuration
   programs.git = {
     enable = true;
+    signing.format = null;
     settings.user.name = "lonnetkirisame";
     settings.user.email = "szfsy06@gmail.com";
     
@@ -129,6 +130,14 @@
     '';
   };
   
+  # Install wrangler via npm into a user-writable prefix (not homebrew, not nixpkgs).
+  home.activation.installWrangler = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    npm_prefix="${config.home.homeDirectory}/.local/share/npm"
+    mkdir -p "$npm_prefix"
+    export PATH="${pkgs.nodejs_26}/bin:$npm_prefix/bin:$PATH"
+    ${pkgs.nodejs_26}/bin/npm install --global --prefix "$npm_prefix" wrangler --quiet
+  '';
+
   # Note: All packages are now managed in packages.nix
   # This file only contains program configurations
 }

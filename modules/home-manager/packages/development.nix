@@ -30,6 +30,7 @@
 
     # ===== NETWORK TOOLS =====
     mitmproxy          # Interactive TUI proxy
+    google-cloud-sdk   # Google Cloud CLI bundle (includes gsutil)
 
     # ===== VIRTUALIZATION =====
     qemu               # Machine emulator and virtualizer
@@ -39,7 +40,6 @@
     rustc              # Rust compiler
     cargo              # Rust package manager
     go                 # Go programming language
-    pipx               # Install and run Python applications in isolated environments
 
     # ===== LATEX AND TYPESETTING =====
     texlive.combined.scheme-full    # Full TeX Live distribution

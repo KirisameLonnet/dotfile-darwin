@@ -60,7 +60,7 @@ shift + alt - space : yabai -m window --toggle float
 shift + lctrl + alt - r : \
     /usr/bin/env osascript <<< \
         "display notification \"Restarting Yabai\" with title \"Yabai\""; \
-    launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"
+    launchctl kickstart -k "gui/${UID}/org.nixos.yabai"
 
 # Make window native fullscreen
 alt - f         : yabai -m window --toggle zoom-fullscreen
@@ -72,12 +72,10 @@ alt - e : yabai -m window --toggle split
 # toggle sticky (show on all spaces)
 alt - s : yabai -m window --toggle sticky
 
-# toggle topmost (keep above other windows)
-alt - o : yabai -m window --toggle topmost
+# topmost was removed in yabai 7.x
 
 # toggle picture-in-picture
-alt - p : yabai -m window --toggle border && \
-          yabai -m window --toggle pip
+alt - p : yabai -m window --toggle pip
 
 # change layout of desktop
 lctrl + alt - a : yabai -m space --layout bsp
@@ -106,8 +104,8 @@ alt - 9 : yabai -m space --focus 9
 alt - 0 : yabai -m space --focus 10
 
 # Applications
-alt - return : /Applications/Kitty.app/Contents/MacOS/kitty
-shift + alt - return : open -n /Applications/Kitty.app
+alt - return : /etc/profiles/per-user/lonnetkirisame/bin/kitty
+shift + alt - return : /etc/profiles/per-user/lonnetkirisame/bin/kitty --single-instance
 
 # Global utilities
 alt - w : /usr/bin/osascript -e 'tell application "Finder" to activate' -e 'delay 0.2' -e 'tell application "System Events" to keystroke "g" using {command down, shift down}' # Finder Go To Folder script

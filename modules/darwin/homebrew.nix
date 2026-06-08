@@ -25,15 +25,13 @@
     
     # Essential taps - FelixKratz ecosystem + core tools
     taps = [
+      "farion1231/ccswitch"         # CC Switch GUI app
       # "FelixKratz/formulae"         # SketchyBar, borders, fnnn - DISABLED
-      "koekeishiya/formulae"        # yabai, skhd (backup if nix fails)
     ];
     
     # CLI tools following FelixKratz's setup (macOS-specific or enhanced versions)
     brews = [
       # Core UI Components - FelixKratz ecosystem
-      "borders"                     # JankyBorders - window borders
-      
       # Audio & Media - macOS integration tools
       "switchaudio-osx"             # Audio device switching
       "nowplaying-cli"              # Media information
@@ -53,7 +51,8 @@
       # Additional Development Tools
       "tree-sitter"                 # Parser generator for syntax highlighting
       "libxkbcommon"               # Keyboard handling library (Wayland/XKB)
-      
+      "librealsense"               # Intel RealSense SDK tools for D435i testing
+
       # Note: fnnn is available through nix, no need for homebrew HEAD install
     ];
     
@@ -75,11 +74,10 @@
       "font-cascadia-code"         # Microsoft's programming font
       
       # System Integration Applications
-      "kitty"                      # Kitty terminal emulator
       "jetbrains-gateway"          # JetBrains Gateway for remote development
       "marta"                      # File manager replacement options
       "xquartz"                    # X11 server for macOS (X11 forwarding)
-      "microsoft-remote-desktop"   # RDP client for xRDP/Windows connections
+      "tigervnc"                   # TigerVNC viewer for X11/Wayland VNC servers
       
       # Optional: FelixKratz workflow apps
       # "raycast"                  # Application launcher (modern Spotlight)
@@ -90,6 +88,8 @@
       # "spotify"                  # Music streaming
       "vesktop"                   # Discord alternative (stable app path for macOS permissions)
       "flutter"                    # Flutter SDK for cross-platform development		
+      "cc-switch"                  # CC Switch GUI app for AI coding CLI provider management
+      "codex-app"                  # OpenAI Codex desktop app for managing coding agents
       # "notion"                   # Note-taking
     ];
     

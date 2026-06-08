@@ -5,7 +5,6 @@
     ./system.nix
     ./fonts.nix
     ./homebrew.nix
-    ./lan-mouse.nix
     ./window-manager.nix
   ];
 
@@ -45,4 +44,11 @@
       # "alacritty" # Can be managed by Nix, but cask version has better integration
     ];
   };
+
+  system.activationScripts.postActivation.text = lib.mkAfter ''
+    app_path="/Applications/Lan Mouse.app"
+    if [ -e "$app_path" ]; then
+      rm -rf "$app_path"
+    fi
+  '';
 }

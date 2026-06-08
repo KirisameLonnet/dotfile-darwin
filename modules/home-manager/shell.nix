@@ -3,6 +3,7 @@
 {
   home.sessionPath = [
     "$HOME/.local/bin"
+    "$HOME/.local/share/npm/bin"
   ];
 
   # Shell configuration
@@ -11,26 +12,25 @@
     enableCompletion = true;
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
-    
+
     # Environment variables to suppress macOS system logs
     sessionVariables = {
       # Default text editor
       EDITOR = "nvim";
       VISUAL = "nvim";
       GIT_EDITOR = "nvim";
-      MINIMAX_API_KEY = "sk-cp-iBkj29UkMd5tkHdaHCJMQh_olMUC0lPCQ_7Ic2LvfNmFh6BAbbKc3L_T6oGvOZqVuY9aqGmVcQ1cxd1_otHsjPtgXFioQxwHFzVdPVqk5ZvobA9ygtcCTUM";
-      
+
       # Suppress macOS input method and keyboard logs
       OS_ACTIVITY_MODE = "disable";
       # Reduce CoreFoundation logging
       CFLOG_FORCE_DISABLE_STDERR = "1";
       # Suppress TSM (Text Services Manager) logs
       TSM_DISABLE_LOG = "1";
-      
+
       # Gemini CLI Configuration
       # API key should be set in ~/.gemini/.env file
     };
-    
+
     shellAliases = {
       # Modern replacements for classic commands
       ll = "eza -la";
@@ -43,12 +43,12 @@
       v = "nvim";
       ssh = "kitten ssh";
       icat = "kitten icat";
-      
+
       # Navigation
       ".." = "cd ..";
       "..." = "cd ../..";
       "...." = "cd ../../..";
-      
+
       # Git aliases
       g = "git";
       ga = "git add";
@@ -62,36 +62,36 @@
       gp = "git push";
       gpl = "git pull";
       gs = "git status";
-      
+
       # System management
       nixup = "sudo darwin-rebuild switch --flake ~/nixconfig";
       nixcheck = "nix flake check ~/nixconfig";
       nixbuild = "nix build ~/nixconfig#darwinConfigurations.simple.system";
       reload = "source ~/.zshrc";
       sudo = "sudo ";
-      
+
       # Modern setup script aliases
       setup = "./quick-setup.sh";
       setup-verify = "./quick-setup.sh --verify";
       setup-restart = "./quick-setup.sh --services";
       setup-help = "./quick-setup.sh --help";
-      
+
       # macOS specific
       showfiles = "defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder";
       hidefiles = "defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder";
-      
+
       # FelixKratz workflow aliases
-      fm = "fnnn";                                   # File manager (custom nnn)
+      fm = "fnnn"; # File manager (custom nnn)
       # sb = "sketchybar";                            # SketchyBar control - DISABLED
-      borders = "borders";                          # JankyBorders control
-      restart-wm = "brew services restart yabai && brew services restart skhd && brew services restart borders";  # SketchyBar removed
-      
+      borders = "borders"; # JankyBorders control
+      restart-wm = "launchctl kickstart -k gui/$UID/org.nixos.yabai && launchctl kickstart -k gui/$UID/org.nixos.skhd";
+
       # AI/ML Tools aliases
       gemini = "npx @google/gemini-cli";
       gm = "npx @google/gemini-cli";
       gemini-chat = "npx @google/gemini-cli -i";
     };
-    
+
     initContent = ''
       # Enable vi mode
       bindkey -v
@@ -160,10 +160,15 @@
         source "$HOME/.config/fnnn/config.sh"
       fi
       
-      # Keep user-local tools ahead of Homebrew so npm-installed CLIs can override stale casks/formulas.
-      export PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+      # Normalize PATH to the nix-darwin per-user profile and avoid stale standalone Home Manager links taking priority.
+      path=(''${path:#$HOME/.nix-profile/bin})
+      path=(/etc/profiles/per-user/lonnetkirisame/bin $HOME/.local/bin $HOME/.local/share/npm/bin /opt/homebrew/bin $path)
+      export PATH
       
-      # Gemini CLI can be configured via ~/.gemini/.env
+      # Load any user-managed environment fragments from ~/.custom-env without requiring a rebuild.
+      for env_file in "$HOME"/.custom-env/*.env(N); do
+        source "$env_file"
+      done
     '';
   };
 
