@@ -39,6 +39,8 @@
     # ===== PROGRAMMING LANGUAGES =====
     rustc              # Rust compiler
     cargo              # Rust package manager
+    rust-analyzer      # Rust language server
+    rustfmt            # Rust formatter
     go                 # Go programming language
 
     # ===== LATEX AND TYPESETTING =====

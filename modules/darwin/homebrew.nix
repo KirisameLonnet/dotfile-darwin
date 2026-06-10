@@ -52,6 +52,7 @@
       "tree-sitter"                 # Parser generator for syntax highlighting
       "libxkbcommon"               # Keyboard handling library (Wayland/XKB)
       "librealsense"               # Intel RealSense SDK tools for D435i testing
+      "little-cms2"                # Color management (required by LibreOfficeDev)
 
       # Note: fnnn is available through nix, no need for homebrew HEAD install
     ];
@@ -90,6 +91,7 @@
       "flutter"                    # Flutter SDK for cross-platform development		
       "cc-switch"                  # CC Switch GUI app for AI coding CLI provider management
       "codex-app"                  # OpenAI Codex desktop app for managing coding agents
+      "libreoffice"                # Office suite (includes soffice CLI)
       # "notion"                   # Note-taking
     ];
     

@@ -61,6 +61,7 @@
           { import = "lazyvim.plugins.extras.lang.python" },
           { import = "lazyvim.plugins.extras.lang.nix" },
           { import = "lazyvim.plugins.extras.lang.json" },
+          { import = "lazyvim.plugins.extras.lang.rust" },
           -- User plugins
           { import = "plugins" },
         },
@@ -126,6 +127,16 @@
               pyright = { mason = false },
               ruff = { mason = false },
               jsonls = { mason = false },
+              rust_analyzer = {
+                mason = false,
+                settings = {
+                  ["rust-analyzer"] = {
+                    cargo = {
+                      sysrootSrc = vim.env.RUST_SRC_PATH,
+                    },
+                  },
+                },
+              },
             },
           },
         },

@@ -27,6 +27,9 @@
       # Suppress TSM (Text Services Manager) logs
       TSM_DISABLE_LOG = "1";
 
+      # Rust standard library source for rust-analyzer
+      RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
+
       # Gemini CLI Configuration
       # API key should be set in ~/.gemini/.env file
     };
