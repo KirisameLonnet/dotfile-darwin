@@ -127,16 +127,7 @@
               pyright = { mason = false },
               ruff = { mason = false },
               jsonls = { mason = false },
-              rust_analyzer = {
-                mason = false,
-                settings = {
-                  ["rust-analyzer"] = {
-                    cargo = {
-                      sysrootSrc = vim.env.RUST_SRC_PATH,
-                    },
-                  },
-                },
-              },
+              rust_analyzer = { mason = false },
             },
           },
         },

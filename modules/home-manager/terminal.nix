@@ -13,9 +13,9 @@
       input_delay = 0;
       repaint_delay = 8;
       sync_to_monitor = "yes";
-      # Disable config watcher — it follows the HM symlink into /nix/store
-      # and opens tens of thousands of fds, exhausting kern.maxfiles.
-      config_reload_interval = 0;
+      # Disable config watcher — kitten __watch_conf__ follows the HM
+      # symlink into /nix/store/.links/ and opens 60k+ fds.
+      auto_reload_config = -1;
 
       # Window Configuration
       window_padding_width = 20;

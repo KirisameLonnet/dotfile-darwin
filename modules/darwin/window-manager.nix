@@ -49,6 +49,17 @@
     };
   };
 
+  launchd.user.agents."org.nixos.yabai".serviceConfig = {
+    Nice = -20;
+    ProcessType = "Interactive";
+    LowPriorityIO = false;
+  };
+
+  launchd.user.agents."org.nixos.skhd".serviceConfig = {
+    Nice = -20;
+    ProcessType = "Interactive";
+  };
+
   # 增强的窗口管理默认设置
   system.defaults = {
     WindowManager = {

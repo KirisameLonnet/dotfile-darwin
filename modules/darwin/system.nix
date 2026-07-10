@@ -150,6 +150,28 @@
     # CapsLock will be configured for input switching via custom settings
   };
 
+  # Raise file descriptor limits — default kern.maxfiles (122880) is too low
+  # for Nix-heavy setups where kitty + zsh + store watchers exhaust fds.
+  launchd.daemons.sysctl-maxfiles = {
+    serviceConfig = {
+      Label = "com.startup.sysctl-maxfiles";
+      ProgramArguments = [
+        "/usr/sbin/sysctl" "kern.maxfiles=524288" "kern.maxfilesperproc=524288"
+      ];
+      RunAtLoad = true;
+    };
+  };
+
+  launchd.daemons.maxfiles = {
+    serviceConfig = {
+      Label = "limit.maxfiles";
+      ProgramArguments = [
+        "launchctl" "limit" "maxfiles" "524288" "524288"
+      ];
+      RunAtLoad = true;
+    };
+  };
+
   # Security - updated option name
   security.pam.services.sudo_local.touchIdAuth = true;
 

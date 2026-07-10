@@ -7,10 +7,13 @@
     
     # Strict cleanup and management policies - Nix controls everything
     onActivation = {
-      cleanup = "zap";              # Remove ALL packages not declared in this file
-      autoUpdate = false;           # Nix controls updates, not Homebrew
-      upgrade = false;              # No automatic upgrades outside of Nix
+      cleanup = "none";             # Cleanup is passed via extraFlags for current Homebrew CLI
+      autoUpdate = false;           # Do not let Homebrew auto-update its taps/API
+      upgrade = true;               # Upgrade declared packages during nix-darwin activation
       extraFlags = [
+        "install"                   # Subcommand required before bundle install flags
+        "--cleanup"                 # Remove packages not declared in this file
+        "--zap"                     # Zap undeclared casks during cleanup
         "--quiet"                   # Suppress unnecessary output
         "--force"                   # Force operations when needed
       ];
@@ -41,17 +44,9 @@
       "lua"                         # For SbarLua configuration
       "lua-language-server"         # LSP for Lua development
       
-      # Scientific Computing (FelixKratz's research focus)
-      "gsl"                         # GNU Scientific Library
-      "llvm"                        # LLVM compiler infrastructure
-      "boost"                       # C++ libraries collection
-      "libomp"                      # OpenMP runtime library
-      "armadillo"                   # Linear algebra library
-      
       # Additional Development Tools
       "tree-sitter"                 # Parser generator for syntax highlighting
       "libxkbcommon"               # Keyboard handling library (Wayland/XKB)
-      "librealsense"               # Intel RealSense SDK tools for D435i testing
       "little-cms2"                # Color management (required by LibreOfficeDev)
 
       # Note: fnnn is available through nix, no need for homebrew HEAD install
@@ -75,10 +70,7 @@
       "font-cascadia-code"         # Microsoft's programming font
       
       # System Integration Applications
-      "jetbrains-gateway"          # JetBrains Gateway for remote development
       "marta"                      # File manager replacement options
-      "xquartz"                    # X11 server for macOS (X11 forwarding)
-      "tigervnc"                   # TigerVNC viewer for X11/Wayland VNC servers
       
       # Optional: FelixKratz workflow apps
       # "raycast"                  # Application launcher (modern Spotlight)
@@ -90,7 +82,10 @@
       "vesktop"                   # Discord alternative (stable app path for macOS permissions)
       "flutter"                    # Flutter SDK for cross-platform development		
       "cc-switch"                  # CC Switch GUI app for AI coding CLI provider management
-      "codex-app"                  # OpenAI Codex desktop app for managing coding agents
+      {
+        name = "codex-app";         # OpenAI Codex desktop app for managing coding agents
+        greedy = true;              # Upgrade despite Homebrew auto_updates flag
+      }
       "libreoffice"                # Office suite (includes soffice CLI)
       # "notion"                   # Note-taking
     ];

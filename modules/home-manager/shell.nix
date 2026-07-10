@@ -67,7 +67,7 @@
       gs = "git status";
 
       # System management
-      nixup = "sudo darwin-rebuild switch --flake ~/nixconfig";
+      nixup = "sudo darwin-rebuild switch --flake ~/nixconfig#simple";
       nixcheck = "nix flake check ~/nixconfig";
       nixbuild = "nix build ~/nixconfig#darwinConfigurations.simple.system";
       reload = "source ~/.zshrc";
@@ -168,6 +168,13 @@
       path=(/etc/profiles/per-user/lonnetkirisame/bin $HOME/.local/bin $HOME/.local/share/npm/bin /opt/homebrew/bin $path)
       export PATH
       
+      # ashpipe: SSH Native Agent Bridge
+      # Disabled by default because `ashpipe detect` runs on every `cd` via the
+      # zsh chpwd hook and blocks when configured portals are unreachable.
+      if [[ "''${ASHPIPE_ENABLE_ZSH_HOOK:-0}" == "1" ]] && command -v ashpipe >/dev/null 2>&1; then
+        eval "$(ashpipe hook zsh)"
+      fi
+
       # Load any user-managed environment fragments from ~/.custom-env without requiring a rebuild.
       for env_file in "$HOME"/.custom-env/*.env(N); do
         source "$env_file"

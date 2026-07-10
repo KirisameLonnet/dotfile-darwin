@@ -11,9 +11,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    ashpipe = {
+      url = "github:KirisameLonnet/ashpipe";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, ashpipe }:
   let
     system = "aarch64-darwin";
     
@@ -62,6 +66,7 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "backup";
+            extraSpecialArgs = { inherit inputs system; };
             users.lonnetkirisame = import ./modules/home-manager;
           };
         }

@@ -1,5 +1,5 @@
 # Unified Package Management
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, system, ... }:
 
 {
   # Import all package modules
@@ -21,5 +21,6 @@
     sshfs	       # SSH Filesystem
     nexttrace
     mosh
+    inputs.ashpipe.packages.${system}.default
   ];
 }

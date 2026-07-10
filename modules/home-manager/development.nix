@@ -1,5 +1,11 @@
 { config, pkgs, lib, ... }:
 
+let
+  npmGlobalPackages = [
+    "wrangler"
+    "@openai/codex"
+  ];
+in
 {
   # Development-specific configurations and specialized tools
   # Note: All packages are managed in packages.nix
@@ -130,12 +136,12 @@
     '';
   };
   
-  # Install wrangler via npm into a user-writable prefix (not homebrew, not nixpkgs).
-  home.activation.installWrangler = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  # Install npm-managed CLIs into a user-writable prefix.
+  home.activation.installNpmGlobalPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     npm_prefix="${config.home.homeDirectory}/.local/share/npm"
     mkdir -p "$npm_prefix"
-    export PATH="${pkgs.nodejs_26}/bin:$npm_prefix/bin:$PATH"
-    ${pkgs.nodejs_26}/bin/npm install --global --prefix "$npm_prefix" wrangler --quiet
+    export PATH="${pkgs.nodejs_22}/bin:$npm_prefix/bin:$PATH"
+    ${pkgs.nodejs_22}/bin/npm install --global --prefix "$npm_prefix" ${lib.escapeShellArgs npmGlobalPackages} --quiet
   '';
 
   # Note: All packages are now managed in packages.nix
