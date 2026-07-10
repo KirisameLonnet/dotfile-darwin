@@ -66,28 +66,16 @@
       gpl = "git pull";
       gs = "git status";
 
-      # System management
-      nixup = "sudo darwin-rebuild switch --flake ~/nixconfig#simple";
-      nixcheck = "nix flake check ~/nixconfig";
-      nixbuild = "nix build ~/nixconfig#darwinConfigurations.simple.system";
+      # Shell helpers
       reload = "source ~/.zshrc";
       sudo = "sudo ";
-
-      # Modern setup script aliases
-      setup = "./quick-setup.sh";
-      setup-verify = "./quick-setup.sh --verify";
-      setup-restart = "./quick-setup.sh --services";
-      setup-help = "./quick-setup.sh --help";
 
       # macOS specific
       showfiles = "defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder";
       hidefiles = "defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder";
 
       # FelixKratz workflow aliases
-      fm = "fnnn"; # File manager (custom nnn)
-      # sb = "sketchybar";                            # SketchyBar control - DISABLED
-      borders = "borders"; # JankyBorders control
-      restart-wm = "launchctl kickstart -k gui/$UID/org.nixos.yabai && launchctl kickstart -k gui/$UID/org.nixos.skhd";
+      fm = "nnn";
 
       # AI/ML Tools aliases
       gemini = "npx @google/gemini-cli";
@@ -98,7 +86,7 @@
     initContent = ''
       # Enable vi mode
       bindkey -v
-      
+
       # History configuration
       HISTFILE=~/.zsh_history
       HISTSIZE=10000
@@ -112,28 +100,23 @@
       setopt HIST_IGNORE_SPACE
       setopt HIST_EXPIRE_DUPS_FIRST
       setopt HIST_SAVE_NO_DUPS
-      
+
       # Directory options
       setopt AUTO_CD
       setopt AUTO_PUSHD
       setopt PUSHD_IGNORE_DUPS
       setopt PUSHD_SILENT
-      
+
       # Completion options
       setopt COMPLETE_ALIASES
       setopt COMPLETE_IN_WORD
       setopt ALWAYS_TO_END
-      
-      # Load FZF if available
-      if command -v fzf >/dev/null 2>&1; then
-        source <(fzf --zsh)
-      fi
-      
+
       # Custom functions
       function mkcd() {
         mkdir -p "$1" && cd "$1"
       }
-      
+
       function extract() {
         if [ -f $1 ] ; then
           case $1 in
@@ -154,20 +137,15 @@
           echo "'$1' is not a valid file"
         fi
       }
-      
+
       # macOS specific settings
       export BROWSER="open"
-      
-      # FelixKratz fnnn configuration
-      if [ -f "$HOME/.config/fnnn/config.sh" ]; then
-        source "$HOME/.config/fnnn/config.sh"
-      fi
-      
+
       # Normalize PATH to the nix-darwin per-user profile and avoid stale standalone Home Manager links taking priority.
       path=(''${path:#$HOME/.nix-profile/bin})
       path=(/etc/profiles/per-user/lonnetkirisame/bin $HOME/.local/bin $HOME/.local/share/npm/bin /opt/homebrew/bin $path)
       export PATH
-      
+
       # ashpipe: SSH Native Agent Bridge
       # Disabled by default because `ashpipe detect` runs on every `cd` via the
       # zsh chpwd hook and blocks when configured portals are unreachable.

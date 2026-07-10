@@ -1,13 +1,13 @@
 # Nix-darwin
 
-本仓库包含一套完整的、模块化的 macOS 配置，基于 [Nix](https://nixos.org/)、[nix-darwin](https://github.com/LnL7/nix-darwin) 和 [home-manager](https://github.com/nix-community/home-manager) 构建。它旨在提供一个一致、可复现且高度自动化的开发环境，核心是围绕 [yabai](https://github.com/koekeishiya/yabai) 和 [skhd](https://github.com/koekeishiya/skhd) 打造的平铺式窗口管理器体验。
+本仓库包含一套完整的、模块化的 macOS 配置，基于 [Nix](https://nixos.org/)、[nix-darwin](https://github.com/nix-darwin/nix-darwin) 和 [home-manager](https://github.com/nix-community/home-manager) 构建。它旨在提供一个一致、可复现且高度自动化的开发环境，核心是围绕 [yabai](https://github.com/koekeishiya/yabai) 和 [skhd](https://github.com/koekeishiya/skhd) 打造的平铺式窗口管理器体验。
 
 ## ✨ 核心特性
 
 - **声明式配置**: 通过 Nix 同时管理系统级 (`nix-darwin`) 和用户级 (`home-manager`) 的配置。
 - **可复现环境**: 一键在新设备上复现你熟悉的开发环境。
 - **平铺式窗口管理器**: 预设 `yabai` 和 `skhd`，提供高效、键盘驱动的工作流。
-- **模块化与自动化**: 配置结构清晰，并通过 `Makefile` 简化了所有常用操作。
+- **模块化与自动化**: 配置结构清晰，并使用 Nix 与 nix-darwin 的官方命令进行管理。
 
 ## 🚀 快速上手
 
@@ -18,52 +18,52 @@
 2.  **克隆仓库**:
     ```bash
     # 推荐将配置克隆到 ~/.config/nixconfig
-    git clone https://github.com/your-username/nixconfig.git ~/.config/nixconfig
+    git clone https://github.com/KirisameLonnet/dotfile-darwin.git ~/.config/nixconfig
     cd ~/.config/nixconfig
     ```
 
-3.  **应用配置**:
+3.  **首次安装 nix-darwin**:
     ```bash
-    # 构建配置并切换到新系统
-    make switch
+    sudo nix run nix-darwin/master#darwin-rebuild -- switch --flake .
     ```
-    此命令将构建 `flake.nix` 中定义的完整系统配置，并激活它。
+
+    nix-darwin 已安装时，直接运行：
+
+    ```bash
+    sudo darwin-rebuild switch --flake .
+    ```
 
 4.  **授权辅助功能**:
-    首次安装后，窗口管理器需要权限才能工作。
-    ```bash
-    make permissions
-    ```
-    此命令会打开系统设置面板，请手动为 `yabai` 授权。
+    首次安装后，在“系统设置 -> 隐私与安全性 -> 辅助功能”中手动为 `yabai` 授权。
 
-## ⚙️ Makefile 使用指南
+## ⚙️ 官方操作流程
 
-`Makefile` 是管理本配置的主要入口，封装了所有常用命令。
+所有命令均在仓库根目录运行。配置名称与本机 `LocalHostName` 一致，因此 `darwin-rebuild` 可以自动选择 `darwinConfigurations."Lonnets-MacBook-Air"`。
 
-<details>
-<summary>点击展开/折叠 Makefile 命令列表</summary>
-
-| 命令 | 描述 |        
+| 操作 | 命令 |
 | :--- | :--- |
-| **核心命令** | |
-| `make switch` | **(最常用)** 构建并应用新配置。对配置的任何更改都通过此命令生效。 |
-| `make build` | 仅构建配置，不激活。用于在应用前检查配置是否存在错误。 |
-| `make update` | 更新所有 Nix Flake 依赖 (如 nixpkgs) 到最新版本，并应用新配置。此流程会自动关闭本次命令的 store optimisation，并在缓存失效时回退到源码构建。 |
-| **诊断与维护** | |
-| `make status` | 显示详细的系统状态，包括服务运行状态和配置文件检查。 |
-| `make logs` | 显示 `yabai` 和 `skhd` 的最新日志，用于排查问题。 |
-| `make test` | 运行一系列测试，检查 `yabai` 权限、`skhd` 语法等。 |
-| `make clean` | 清理旧的 Nix Store generations 和构建产物，释放磁盘空间。 |
-| `make format` | 格式化项目中的所有 `.nix` 文件。 |
-| `make help` | 显示所有可用的 `make` 命令及其描述。 |
- 
-</details>
+| 仅构建 | `darwin-rebuild build --flake .` |
+| 检查配置与激活条件 | `sudo darwin-rebuild check --flake .` |
+| 构建并应用 | `sudo darwin-rebuild switch --flake .` |
+| 检查 Flake 输出 | `nix flake check` |
+| 格式化 Nix 文件 | `nix fmt` |
+| 更新全部输入 | `nix flake update` |
+| 更新单个输入 | `nix flake update nixpkgs` |
+
+更新依赖和应用系统应分开执行，以便先审查锁文件并验证配置：
+
+```bash
+nix flake update
+git diff -- flake.lock
+sudo darwin-rebuild check --flake .
+sudo darwin-rebuild switch --flake .
+```
 
 ## Determinate Nix 备注
 
-此仓库当前在 `modules/darwin/system.nix` 中设置了 `nix.enable = false`，以兼容 Determinate Nix。这意味着仓库里的 `nix.settings.*` 不一定会直接改到正在运行的 daemon 配置；实际生效的全局配置仍以 `/etc/nix/nix.conf` 和 `/etc/nix/nix.custom.conf` 为准。
+此仓库在 `modules/darwin/system.nix` 中设置了 `nix.enable = false`，这是 nix-darwin 官方针对 Determinate Nix 的兼容方式。nix-darwin 不会管理 Nix daemon 或 `/etc/nix/nix.conf`；全局设置以 Determinate Nix 管理的 `/etc/nix/nix.conf` 和 `/etc/nix/nix.custom.conf` 为准。
 
-如果遇到类似 `filesystem error: in create_hard_link: File exists` 的报错，通常是 Determinate Nix / macOS 上 `auto-optimise-store` 与 `/nix/store/.links` 的已知冲突。仓库内的 `make build` / `make update` 已经会为当前命令临时关闭该选项，但系统级设置若仍保留 `auto-optimise-store = true`，你在仓库外单独执行其他 `nix` 命令时仍可能再次触发同类问题。
+如果遇到 `filesystem error: in create_hard_link: File exists`，应在 Determinate Nix 的配置中关闭 `auto-optimise-store`。临时验证时可将 `--option auto-optimise-store false` 传给 `darwin-rebuild`。
 
 ## 🛠️ 已安装工具与别名
 
@@ -94,7 +94,6 @@
 | `vim`, `v` | `nvim` | 使用 Neovim |
 | `..` | `cd ..` | 快速切换上级目录 |
 | `g`, `gs`, `ga` | `git`, `git status`, `git add` | Git 常用命令 |
-| `nixup` | `darwin-rebuild switch --flake ...` | 更新并应用 Nix 配置 |
 | `reload` | `source ~/.zshrc` | 重新加载 Zsh 配置 |
 
 </details>
@@ -151,7 +150,6 @@
 
 ## 🔧 自定义与维护
 
-- **添加软件包**: 编辑 `modules/home-manager/packages/` 或 `modules/darwin/homebrew.nix`，然后运行 `make switch`。
-- **修改快捷键**: 编辑 `config/skhd/skhdrc`，然后运行 `make restart-skhd` 或 `make switch`。
-- **修改 Neovim**: 编辑 `modules/home-manager/editor/nvim.nix`，然后运行 `make switch`.
-
+- **添加软件包**: 编辑 `modules/home-manager/packages/` 或 `modules/darwin/homebrew.nix`，然后运行 `sudo darwin-rebuild switch --flake .`。
+- **修改快捷键**: 编辑 `config/skhd/skhdrc`，然后运行 `sudo darwin-rebuild switch --flake .`。
+- **修改 Neovim**: 编辑 `modules/home-manager/editor/nvim.nix`，然后运行 `sudo darwin-rebuild switch --flake .`。

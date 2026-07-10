@@ -1,128 +1,105 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 
 {
-  # Homebrew fully managed by Nix - zero manual intervention
+  # Homebrew packages declared through nix-darwin's supported module.
   homebrew = {
     enable = true;
-    
-    # Strict cleanup and management policies - Nix controls everything
+
+    # Use nix-darwin's native activation policy instead of raw brew flags.
     onActivation = {
-      cleanup = "none";             # Cleanup is passed via extraFlags for current Homebrew CLI
-      autoUpdate = false;           # Do not let Homebrew auto-update its taps/API
-      upgrade = true;               # Upgrade declared packages during nix-darwin activation
+      cleanup = "zap";
+      autoUpdate = false;
+      upgrade = true;
       extraFlags = [
-        "install"                   # Subcommand required before bundle install flags
-        "--cleanup"                 # Remove packages not declared in this file
-        "--zap"                     # Zap undeclared casks during cleanup
-        "--quiet"                   # Suppress unnecessary output
-        "--force"                   # Force operations when needed
+        "--quiet"
       ];
     };
-    
+
     # Global homebrew settings optimized for Nix management
     global = {
-      brewfile = true;              # Generate Brewfile for compatibility
+      brewfile = true; # Generate Brewfile for compatibility
 
-      autoUpdate = false;           # Disable homebrew's auto-update
+      autoUpdate = false; # Disable homebrew's auto-update
     };
-    
+
     # Essential taps - FelixKratz ecosystem + core tools
     taps = [
-      "farion1231/ccswitch"         # CC Switch GUI app
-      # "FelixKratz/formulae"         # SketchyBar, borders, fnnn - DISABLED
+      "farion1231/ccswitch" # CC Switch GUI app
     ];
-    
+
     # CLI tools following FelixKratz's setup (macOS-specific or enhanced versions)
     brews = [
       # Core UI Components - FelixKratz ecosystem
       # Audio & Media - macOS integration tools
-      "switchaudio-osx"             # Audio device switching
-      "nowplaying-cli"              # Media information
-      "ifstat"                      # Network statistics
-      
-      # Terminal & Development Tools
-      "lua"                         # For SbarLua configuration
-      "lua-language-server"         # LSP for Lua development
-      
-      # Additional Development Tools
-      "tree-sitter"                 # Parser generator for syntax highlighting
-      "libxkbcommon"               # Keyboard handling library (Wayland/XKB)
-      "little-cms2"                # Color management (required by LibreOfficeDev)
+      "switchaudio-osx" # Audio device switching
+      "nowplaying-cli" # Media information
+      "ifstat" # Network statistics
 
-      # Note: fnnn is available through nix, no need for homebrew HEAD install
+      # Terminal & Development Tools
+      "lua" # For SbarLua configuration
+      "lua-language-server" # LSP for Lua development
+
+      # Additional Development Tools
+      "tree-sitter" # Parser generator for syntax highlighting
+      "libxkbcommon" # Keyboard handling library (Wayland/XKB)
+      "little-cms2" # Color management (required by LibreOfficeDev)
+
     ];
-    
+
     # GUI applications - FelixKratz's font requirements + essential apps
     casks = [
-      # Apple Fonts - Required for SketchyBar - DISABLED
-      # "sf-symbols"                  # Apple's official symbol font (SketchyBar requirement)
-      "font-sf-mono"               # San Francisco Mono font
-      "font-sf-pro"                # San Francisco Pro font
-      
+      "font-sf-mono" # San Francisco Mono font
+      "font-sf-pro" # San Francisco Pro font
+
       # Nerd Fonts - Programming fonts with icons
-      "font-hack-nerd-font"        # Hack Nerd Font (FelixKratz preference)
-      "font-jetbrains-mono"        # JetBrains Mono (terminal primary)
-      "font-meslo-lg-nerd-font"    # Meslo LG Nerd Font (correct name)
-      "font-fira-code-nerd-font"   # Fira Code with ligatures
-      
+      "font-hack-nerd-font" # Hack Nerd Font (FelixKratz preference)
+      "font-jetbrains-mono" # JetBrains Mono (terminal primary)
+      "font-meslo-lg-nerd-font" # Meslo LG Nerd Font (correct name)
+      "font-fira-code-nerd-font" # Fira Code with ligatures
+
       # Development Fonts
-      "font-victor-mono"           # Victor Mono (cursive italics)
-      "font-cascadia-code"         # Microsoft's programming font
-      
+      "font-victor-mono" # Victor Mono (cursive italics)
+      "font-cascadia-code" # Microsoft's programming font
+
       # System Integration Applications
-      "marta"                      # File manager replacement options
-      
+      "marta" # File manager replacement options
+
       # Optional: FelixKratz workflow apps
       # "raycast"                  # Application launcher (modern Spotlight)
       # "cleanmymac"               # System maintenance
       # "finder"                   # File manager replacement options
-      
+
       # Media & Productivity (optional)
       # "spotify"                  # Music streaming
-      "vesktop"                   # Discord alternative (stable app path for macOS permissions)
-      "flutter"                    # Flutter SDK for cross-platform development		
-      "cc-switch"                  # CC Switch GUI app for AI coding CLI provider management
+      "vesktop" # Discord alternative (stable app path for macOS permissions)
+      "flutter" # Flutter SDK for cross-platform development
+      "cc-switch" # CC Switch GUI app for AI coding CLI provider management
       {
-        name = "codex-app";         # OpenAI Codex desktop app for managing coding agents
-        greedy = true;              # Upgrade despite Homebrew auto_updates flag
+        name = "codex-app"; # OpenAI Codex desktop app for managing coding agents
+        greedy = true; # Upgrade despite Homebrew auto_updates flag
       }
-      "libreoffice"                # Office suite (includes soffice CLI)
+      "libreoffice" # Office suite (includes soffice CLI)
       # "notion"                   # Note-taking
     ];
-    
+
     # Strict cask installation settings
     caskArgs = {
-      appdir = "/Applications";     # Standard location
-      require_sha = true;           # Verify checksums for security
+      appdir = "/Applications"; # Standard location
+      require_sha = true; # Verify checksums for security
     };
   };
-  
+
   # Environment integration - make homebrew tools available but secondary to nix
   environment.systemPath = [
     # Note: homebrew is added AFTER nix paths to give nix packages priority
     "${config.homebrew.prefix}/bin"
   ];
-  
+
   # Security and privacy settings for homebrew
   environment.variables = {
-    HOMEBREW_NO_ANALYTICS = "1";           # Disable telemetry
-    HOMEBREW_NO_INSECURE_REDIRECT = "1";   # Security hardening
-    HOMEBREW_CASK_OPTS = "--require-sha";  # Verify cask integrity
-    HOMEBREW_NO_AUTO_UPDATE = "1";         # Prevent auto-updates
-    HOMEBREW_NO_INSTALL_CLEANUP = "1";     # Let nix handle cleanup
-    HOMEBREW_BAT = "1";                    # Use bat for better output (if available)
+    HOMEBREW_NO_ANALYTICS = "1"; # Disable telemetry
+    HOMEBREW_NO_INSECURE_REDIRECT = "1"; # Security hardening
+    HOMEBREW_CASK_OPTS = "--require-sha"; # Verify cask integrity
+    HOMEBREW_BAT = "1"; # Use bat for better output (if available)
   };
-  
-  # Post-activation scripts to verify homebrew state
-  system.activationScripts.postActivation.text = ''
-    # Verify homebrew is under nix control
-    echo "Verifying Homebrew is managed by Nix..."
-    if command -v brew &> /dev/null; then
-      echo "✓ Homebrew available at: $(which brew)"
-      echo "✓ Homebrew prefix: $(brew --prefix)"
-      echo "✓ Homebrew is properly managed by Nix"
-    else
-      echo "⚠ Homebrew not found - will be installed by nix-darwin"
-    fi
-  '';
 }

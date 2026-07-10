@@ -1,10 +1,10 @@
 {
-  description = "Modern modular macOS configuration with nix-darwin + home-manager + yabai";  # SketchyBar removed
+  description = "Modern modular macOS configuration with nix-darwin + home-manager + yabai";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin = {
-      url = "github:LnL7/nix-darwin";
+      url = "github:nix-darwin/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -17,90 +17,75 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, ashpipe }:
-  let
-    system = "aarch64-darwin";
-    
-    # Custom packages configuration
-    pkgsConfig = {
-      allowUnfree = true;
-    };
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      nix-darwin,
+      home-manager,
+      ashpipe,
+    }:
+    let
+      system = "aarch64-darwin";
 
-    pkgsOverlays = [
-      # Custom overlay for window management tools
-      (final: prev: {
-          # Use the latest yabai from nixpkgs
-          yabai-latest = prev.yabai;
-          
-          # SketchyBar - DISABLED
-          # In the meantime, we'll use homebrew for SketchyBar
-          # sketchybar-placeholder = prev.writeShellScriptBin "sketchybar" ''
-          #   echo "SketchyBar managed by homebrew"
-          # '';
+      # Custom packages configuration
+      pkgsConfig = {
+        allowUnfree = true;
+      };
 
-          # Pin mitmproxy to python3.12 to avoid dependency issues
-          mitmproxy = with prev.python312Packages; prev.python312Packages.toPythonApplication mitmproxy;
-
+      pkgsOverlays = [
+        # Darwin compatibility for packages that depend on unity-test.
+        (_: prev: {
           # unity-test fails its C++-compiled tests on darwin; skip checks to keep dependents building.
-          unity-test = prev.unity-test.overrideAttrs (_: { doCheck = false; });
-      })
-    ];
-
-    pkgs = import nixpkgs {
-      inherit system;
-      config = pkgsConfig;
-      overlays = pkgsOverlays;
-    };
-  in
-  {
-    darwinConfigurations."simple" = nix-darwin.lib.darwinSystem {
-      inherit system;
-      modules = [
-        # Import our modular darwin configuration
-        ./modules/darwin
-        
-        # Home Manager integration
-        home-manager.darwinModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            backupFileExtension = "backup";
-            extraSpecialArgs = { inherit inputs system; };
-            users.lonnetkirisame = import ./modules/home-manager;
-          };
-        }
-        
-        # Basic system configuration
-        ({ config, pkgs, ... }: {
-          # Users
-          users.users.lonnetkirisame = {
-            name = "lonnetkirisame";
-            home = "/Users/lonnetkirisame";
-          };
-
-          # Nix configuration
-          nix.settings.experimental-features = "nix-command flakes";
-          # services.nix-daemon.enable = true; # Removed - managed automatically
-          programs.zsh.enable = true;
-
-          # System version
-          system.configurationRevision = self.rev or self.dirtyRev or null;
-          system.stateVersion = 5;
-          nixpkgs.hostPlatform = system;
-          nixpkgs.config = pkgsConfig;
-          nixpkgs.overlays = pkgsOverlays;
+          unity-test = prev.unity-test.overrideAttrs (_: {
+            doCheck = false;
+          });
         })
       ];
-    };
 
-    # Development shell for working on the configuration
-    devShells.${system}.default = pkgs.mkShell {
-      buildInputs = with pkgs; [
-        nil # Nix language server
-        nixpkgs-fmt # Nix formatter
-        nix-tree # Explore nix dependencies
-      ];
+      pkgs = import nixpkgs {
+        inherit system;
+        config = pkgsConfig;
+        overlays = pkgsOverlays;
+      };
+    in
+    {
+      darwinConfigurations."Lonnets-MacBook-Air" = nix-darwin.lib.darwinSystem {
+        modules = [
+          # Import our modular darwin configuration
+          ./modules/darwin
+
+          # Home Manager integration
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              backupFileExtension = "backup";
+              extraSpecialArgs = { inherit inputs system; };
+              users.lonnetkirisame = import ./modules/home-manager;
+            };
+          }
+
+          # Flake-specific configuration
+          {
+            system.configurationRevision = self.rev or self.dirtyRev or null;
+            nixpkgs.config = pkgsConfig;
+            nixpkgs.overlays = pkgsOverlays;
+          }
+        ];
+      };
+
+      checks.${system}.darwin = self.darwinConfigurations."Lonnets-MacBook-Air".system;
+      formatter.${system} = pkgs.nixfmt-tree;
+
+      # Development shell for working on the configuration
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          nil # Nix language server
+          nixfmt-tree # Nix tree formatter
+          nix-tree # Explore nix dependencies
+        ];
+      };
     };
-  };
 }

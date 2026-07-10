@@ -3,20 +3,20 @@
 # ============================================================================
 # 窗口管理器配置策略
 # ============================================================================
-# 
+#
 # 配置方式：简化混合策略
 # - Nix Darwin: 只管理服务启动/停止，包管理
 # - yabairc: 处理所有实际配置（基础设置、规则、信号）
-# 
+#
 # 为什么采用这种方式：
 # 1. 避免配置重复和冲突
 # 2. yabairc 支持完整的 yabai 功能
 # 3. Nix Darwin 负责服务管理，确保可靠启动
 # 4. 配置更改只需要修改一个文件 (yabairc)
-# 
+#
 # 修复的问题：
 # - 移除了 nix 配置和 yabairc 之间的重复配置
-# - 消除了动画冲突 
+# - 消除了动画冲突
 # - 简化了维护（yabai 配置的单一真相来源）
 #
 # 配置文件：
@@ -28,9 +28,8 @@
 {
   # 窗口管理工具 - 全部使用 nix 构建而不是 homebrew
   environment.systemPackages = with pkgs; [
-    yabai              # 平铺窗口管理器
-    skhd               # 简单快捷键守护进程
-    # borders 可以根据需要从源码构建
+    yabai # 平铺窗口管理器
+    skhd # 简单快捷键守护进程
   ];
 
   # 启用 yabai 和 skhd 服务
@@ -65,11 +64,11 @@
     WindowManager = {
       EnableStandardClickToShowDesktop = false;
       StandardHideDesktopIcons = true;
-      HideDesktop = false;  # 临时启用，避免影响系统设置
+      HideDesktop = false; # 临时启用，避免影响系统设置
       StageManagerHideWidgets = true;
-      GloballyEnabled = false;  # 禁用 Stage Manager，避免与 yabai 冲突
+      GloballyEnabled = false; # 禁用 Stage Manager，避免与 yabai 冲突
     };
-    
+
     spaces = {
       spans-displays = false;
     };

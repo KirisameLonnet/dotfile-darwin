@@ -4,9 +4,6 @@
   # Disable nix-darwin's Nix management for Determinate Nix compatibility
   nix.enable = false;
 
-  # Necessary for using flakes on this system.
-  nix.settings.experimental-features = "nix-command flakes";
-
   # Create /etc/zshrc that loads the nix-darwin environment.
   programs.zsh.enable = true;
 
@@ -21,7 +18,7 @@
     name = "lonnetkirisame";
     home = "/Users/lonnetkirisame";
   };
-  
+
   # Set primary user for system preferences
   system.primaryUser = "lonnetkirisame";
 
@@ -36,8 +33,8 @@
   system.defaults = {
     dock = {
       autohide = true;
-      autohide-delay = 0.3;           # Slower dock appearance for elegance
-      autohide-time-modifier = 1.0;   # Standard macOS dock animation speed
+      autohide-delay = 0.3; # Slower dock appearance for elegance
+      autohide-time-modifier = 1.0; # Standard macOS dock animation speed
       mru-spaces = false;
       orientation = "bottom";
       showhidden = true;
@@ -46,12 +43,12 @@
       # Enhanced dock animations - synchronized with yabai timing
       expose-animation-duration = 0.35; # Match yabai window animation duration
       minimize-to-application = true;
-      mineffect = "genie";             # Classic genie effect
+      mineffect = "genie"; # Classic genie effect
       show-process-indicators = true;
       static-only = false;
       # Dock appearance tweaks
-      magnification = false;           # Disable magnification for consistency
-      largesize = 64;                  # Size when magnified (if enabled)
+      magnification = false; # Disable magnification for consistency
+      largesize = 64; # Size when magnified (if enabled)
     };
 
     finder = {
@@ -67,7 +64,7 @@
 
     loginwindow = {
       GuestEnabled = false;
-      SHOWFULLNAME = false;  # Show user avatars instead of requiring username input  
+      SHOWFULLNAME = false; # Show user avatars instead of requiring username input
       DisableConsoleAccess = true;
     };
 
@@ -96,27 +93,24 @@
       NSNavPanelExpandedStateForSaveMode2 = true;
       PMPrintingExpandedStateForPrint = true;
       PMPrintingExpandedStateForPrint2 = true;
-      
+
       # Enhanced animation settings for smoother UI
-      NSWindowResizeTime = 0.15;           # Faster window resize animations
-      NSAutomaticWindowAnimationsEnabled = true;  # Enable window animations
-      NSScrollAnimationEnabled = true;     # Smooth scrolling animations
-      
+      NSWindowResizeTime = 0.15; # Faster window resize animations
+      NSAutomaticWindowAnimationsEnabled = true; # Enable window animations
+      NSScrollAnimationEnabled = true; # Smooth scrolling animations
+
       # Enhanced native animations and transitions
-      NSUseAnimatedFocusRing = true;       # Animated focus rings
-      
+      NSUseAnimatedFocusRing = true; # Animated focus rings
+
       # Native gesture and navigation support
-      AppleEnableSwipeNavigateWithScrolls = true;        # Two finger swipe navigation
-      AppleEnableMouseSwipeNavigateWithScrolls = true;   # Mouse swipe navigation
+      AppleEnableSwipeNavigateWithScrolls = true; # Two finger swipe navigation
+      AppleEnableMouseSwipeNavigateWithScrolls = true; # Mouse swipe navigation
       AppleSpacesSwitchOnActivate = false; # Don't auto-switch spaces when activating apps
-      
+
       # Enhanced transparency and blur settings for better window distinction
-      NSWindowShouldDragOnGesture = true;  # Enable window dragging gestures
+      NSWindowShouldDragOnGesture = true; # Enable window dragging gestures
       NSDisableAutomaticTermination = true; # Prevent automatic app termination
     };
-
-    # Hide menu bar automatically - DISABLED (SketchyBar removed)
-    # NSGlobalDomain._HIHideMenuBar = true;
 
     screencapture = {
       location = "~/Pictures/Screenshots";
@@ -124,18 +118,18 @@
     };
 
     trackpad = {
-      ActuationStrength = 1;               # Normal force click strength
-      Clicking = true;                     # Tap to click
-      FirstClickThreshold = 1;             # Click sensitivity
-      SecondClickThreshold = 1;            # Force click sensitivity  
-      TrackpadRightClick = true;           # Two finger right click
-      TrackpadThreeFingerDrag = false;     # Disable to avoid gesture conflicts
+      ActuationStrength = 1; # Normal force click strength
+      Clicking = true; # Tap to click
+      FirstClickThreshold = 1; # Click sensitivity
+      SecondClickThreshold = 1; # Force click sensitivity
+      TrackpadRightClick = true; # Two finger right click
+      TrackpadThreeFingerDrag = false; # Disable to avoid gesture conflicts
     };
 
     # Universal access settings to ensure transparency and blur effects work
     universalaccess = {
-      reduceMotion = false;        # Keep animations enabled for smooth transitions
-      reduceTransparency = false;  # Critical: Keep transparency enabled for window blur
+      reduceMotion = false; # Keep animations enabled for smooth transitions
+      reduceTransparency = false; # Critical: Keep transparency enabled for window blur
       closeViewScrollWheelToggle = false; # Disable zoom scroll toggle
       mouseDriverCursorSize = 1.0; # Standard cursor size
     };
@@ -156,7 +150,9 @@
     serviceConfig = {
       Label = "com.startup.sysctl-maxfiles";
       ProgramArguments = [
-        "/usr/sbin/sysctl" "kern.maxfiles=524288" "kern.maxfilesperproc=524288"
+        "/usr/sbin/sysctl"
+        "kern.maxfiles=524288"
+        "kern.maxfilesperproc=524288"
       ];
       RunAtLoad = true;
     };
@@ -166,7 +162,11 @@
     serviceConfig = {
       Label = "limit.maxfiles";
       ProgramArguments = [
-        "launchctl" "limit" "maxfiles" "524288" "524288"
+        "launchctl"
+        "limit"
+        "maxfiles"
+        "524288"
+        "524288"
       ];
       RunAtLoad = true;
     };
@@ -180,7 +180,7 @@
     # Configure native macOS trackpad gestures for the primary user
     # These settings are not directly supported by nix-darwin, so we set them via defaults
     echo "Configuring native macOS trackpad gestures..."
-    
+
     # Get the primary user's information
     PRIMARY_USER="lonnetkirisame"
     if id "$PRIMARY_USER" >/dev/null 2>&1; then

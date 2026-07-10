@@ -5,7 +5,7 @@
 # ============================================================================
 # 
 # Note: Many options from earlier versions have been removed in yabai 7.x:
-# - window_border, window_border_width, etc. → Use "borders" app instead
+# - window_border, window_border_width, etc. are not configured by yabai.
 # - window_topmost → Removed
 # - layer → Removed from rules
 # - window_animation_easing → Removed (only duration remains)
