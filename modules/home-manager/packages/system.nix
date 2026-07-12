@@ -34,5 +34,6 @@
     # ===== MACOS SPECIFIC =====
     mas                # Mac App Store CLI
     m-cli              # macOS management CLI
+    (pkgs.callPackage ../../../packages/wwan-manager.nix { }) # WWAN/PPP GUI
 ];
 }
