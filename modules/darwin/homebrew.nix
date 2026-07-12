@@ -7,10 +7,12 @@
 
     # Use nix-darwin's native activation policy instead of raw brew flags.
     onActivation = {
-      cleanup = "zap";
+      cleanup = "none";
       autoUpdate = false;
       upgrade = true;
       extraFlags = [
+        "--cleanup"
+        "--zap"
         "--quiet"
       ];
     };
