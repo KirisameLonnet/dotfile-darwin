@@ -7,11 +7,11 @@
 
 stdenvNoCC.mkDerivation {
   pname = "wwan-manager";
-  version = "1.1";
+  version = "1.3.0-rc.1";
 
   src = fetchurl {
-    url = "https://github.com/patriczeq/WWANManager/releases/download/1.1/WWANManager.zip";
-    hash = "sha256-cgOFCBVOGA3c34SBIUdMODjVwm/OFLb0LO8lWVcuYkU=";
+    url = "https://github.com/KirisameLonnet/qdc507-wwan-manager/releases/download/v1.3.0-rc.1/WWANManager-1.3.0-macos-universal.zip";
+    hash = "sha256-qzDRyG6bK68tBJAdHtZTwC29ilkrBjr6YlcMUV/qPTc=";
   };
 
   nativeBuildInputs = [ unzip ];
@@ -29,8 +29,8 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
-    description = "WWAN and serial PPP connection manager for macOS";
-    homepage = "https://github.com/patriczeq/WWANManager";
+    description = "QDC507 WWAN and serial PPP connection manager for macOS";
+    homepage = "https://github.com/KirisameLonnet/qdc507-wwan-manager";
     license = lib.licenses.mit;
     platforms = lib.platforms.darwin;
     sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
