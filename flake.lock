@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781574030,
-        "narHash": "sha256-VcU+FFohNlfZizHgLuAs6r6c2IOQF6/tIcse/c+3104=",
+        "lastModified": 1783903004,
+        "narHash": "sha256-SxGUmB77PLgO/jJO4RDUDeL2w5Pz5D8NGdxdOuyXwII=",
         "owner": "KirisameLonnet",
         "repo": "ashpipe",
-        "rev": "b0de849c806931236d5227a938552844246685e1",
+        "rev": "daebc5e341488581e9cad4eb03f9dc1b0548137d",
         "type": "github"
       },
       "original": {
