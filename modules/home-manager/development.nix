@@ -18,6 +18,10 @@ in
   # Git configuration
   programs.git = {
     enable = true;
+    ignores = [
+      "**/.claude/settings.local.json"
+      ".DS_Store"
+    ];
     signing.format = null;
     settings.user.name = "lonnetkirisame";
     settings.user.email = "szfsy06@gmail.com";

@@ -7,11 +7,11 @@
 
 stdenvNoCC.mkDerivation {
   pname = "wwan-manager";
-  version = "1.3.0-rc.1";
+  version = "1.3.1";
 
   src = fetchurl {
-    url = "https://github.com/KirisameLonnet/qdc507-wwan-manager/releases/download/v1.3.0-rc.1/WWANManager-1.3.0-macos-universal.zip";
-    hash = "sha256-qzDRyG6bK68tBJAdHtZTwC29ilkrBjr6YlcMUV/qPTc=";
+    url = "https://github.com/KirisameLonnet/qdc507-wwan-manager/releases/download/v1.3.1/WWANManager-1.3.1-macos-universal.zip";
+    hash = "sha256-dg6cnlLmGVFY2CN86y4SWXmYqkldhN1bBUb3o2JmuXQ=";
   };
 
   nativeBuildInputs = [ unzip ];

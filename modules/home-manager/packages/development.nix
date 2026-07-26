@@ -46,6 +46,13 @@ in
     pkg-config         # Package configuration
     android-tools      # Android Debug Bridge (ADB)
 
+    # ===== EMBEDDED DEVELOPMENT =====
+    arduino-cli # Arduino board manager, compiler frontend, and uploader
+    arduino-language-server # Arduino-aware language server for Vim and VS Code
+    avrdude # AVR programmer and uploader
+    picocom # Serial terminal
+    clang-tools # clangd backend used for C/C++ completion
+
     # ===== CODE QUALITY =====
     nil                # Nix language server
     nixpkgs-fmt        # Nix formatter

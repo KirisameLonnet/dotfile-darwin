@@ -8,7 +8,7 @@
     # Use nix-darwin's native activation policy instead of raw brew flags.
     onActivation = {
       cleanup = "none";
-      autoUpdate = false;
+      autoUpdate = true; # Keep Homebrew compatible with its live package APIs
       upgrade = true;
       extraFlags = [
         "--cleanup"
@@ -21,7 +21,7 @@
     global = {
       brewfile = true; # Generate Brewfile for compatibility
 
-      autoUpdate = false; # Disable homebrew's auto-update
+      autoUpdate = true; # Keep manual Homebrew commands on the current client and API versions
     };
 
     # Essential taps - FelixKratz ecosystem + core tools
@@ -65,6 +65,10 @@
 
       # System Integration Applications
       "marta" # File manager replacement options
+      {
+        name = "macfuse"; # FUSE kernel extension used by Nix sshfs
+        greedy = true; # Keep the kernel extension and user-space library current
+      }
 
       # Optional: FelixKratz workflow apps
       # "raycast"                  # Application launcher (modern Spotlight)

@@ -40,6 +40,15 @@
           unity-test = prev.unity-test.overrideAttrs (_: {
             doCheck = false;
           });
+
+          # VS Code 1.129 moved the bundled ripgrep binary into the unpacked ASAR tree.
+          vscode = prev.vscode.overrideAttrs (old: {
+            postPatch =
+              builtins.replaceStrings
+                [ "Contents/Resources/app/node_modules/@vscode/ripgrep-universal" ]
+                [ "Contents/Resources/app/node_modules.asar.unpacked/@vscode/ripgrep-universal" ]
+                old.postPatch;
+          });
         })
       ];
 
