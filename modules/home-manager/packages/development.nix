@@ -2,6 +2,30 @@
 { config, pkgs, ... }:
 
 let
+  # XeLaTeX toolchain for Chinese documents and the local resume template.
+  latexToolchain = pkgs.texlive.withPackages (ps: with ps; [
+    scheme-small
+    latexmk
+    xetex
+    xltxtra
+    xifthen
+    fontspec
+    xecjk
+    geometry
+    hyperref
+    url
+    enumitem
+    titlesec
+    nth
+    tabu
+    multirow
+    progressbar
+    setspace
+    cite
+    graphics
+    tools
+  ]);
+
   # Build a self-contained Rust toolchain directory with bin/ + lib/ so that
   # both cargo and rust-analyzer (which sets RUSTUP_TOOLCHAIN to the sysroot
   # path) can find everything they need.  We graft the standard library
@@ -45,6 +69,7 @@ in
     cmake              # Cross-platform build tool
     pkg-config         # Package configuration
     android-tools      # Android Debug Bridge (ADB)
+    latexToolchain     # XeLaTeX + Chinese document and resume dependencies
 
     # ===== EMBEDDED DEVELOPMENT =====
     arduino-cli # Arduino board manager, compiler frontend, and uploader

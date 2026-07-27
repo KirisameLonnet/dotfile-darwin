@@ -41,6 +41,17 @@
             doCheck = false;
           });
 
+          # Upgrade ONLY claude-code ahead of the pinned nixpkgs, without bumping
+          # the whole nixpkgs input. To bump again: set version + the darwin-arm64
+          # sha256 from https://downloads.claude.ai/claude-code-releases/<ver>/... .
+          claude-code = prev.claude-code.overrideAttrs (_: rec {
+            version = "2.1.220";
+            src = prev.fetchurl {
+              url = "https://downloads.claude.ai/claude-code-releases/${version}/darwin-arm64/claude";
+              sha256 = "8addc857f3fe64d5a0368af9ee50321b50afb4a6918ba3ef018ab84f5dbbe081";
+            };
+          });
+
           # VS Code 1.129 moved the bundled ripgrep binary into the unpacked ASAR tree.
           vscode = prev.vscode.overrideAttrs (old: {
             postPatch =
