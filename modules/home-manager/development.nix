@@ -9,11 +9,26 @@ let
   npmGlobalPackages = [
     "wrangler"
     "@openai/codex"
+    "@deepseek-ai/dsh"
   ];
+
+  npmPrefix = "${config.home.homeDirectory}/.local/share/npm";
+  deepseekHarness = pkgs.writeShellScriptBin "dsh" ''
+    dsh="${npmPrefix}/bin/dsh"
+    if [ ! -x "$dsh" ]; then
+      echo "DeepSeek Harness is not installed yet: $dsh" >&2
+      exit 75
+    fi
+
+    exec ${pkgs.nodejs_22}/bin/node --expose-internals "$dsh" "$@"
+  '';
 in
 {
   # Development-specific configurations and specialized tools
   # Note: All packages are managed in packages.nix
+
+  # The DSH web profile's HMR plugin requires Node loader internals.
+  home.packages = [ deepseekHarness ];
 
   # Git configuration
   programs.git = {
@@ -154,7 +169,7 @@ in
 
   # Install npm-managed CLIs into a user-writable prefix.
   home.activation.installNpmGlobalPackages = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    npm_prefix="${config.home.homeDirectory}/.local/share/npm"
+    npm_prefix="${npmPrefix}"
     mkdir -p "$npm_prefix"
     export PATH="${pkgs.nodejs_22}/bin:$npm_prefix/bin:$PATH"
     ${pkgs.nodejs_22}/bin/npm install --global --prefix "$npm_prefix" ${lib.escapeShellArgs npmGlobalPackages} --quiet
@@ -170,6 +185,27 @@ in
     fi
     ln -sf ../lib/node_modules/@openai/codex/bin/codex.js "$npm_prefix/bin/codex" 2>/dev/null || true
   '';
+
+  # Start the DeepSeek Harness Web UI when the user logs in.
+  launchd.agents.deepseek-harness = {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "${deepseekHarness}/bin/dsh"
+        "web"
+      ];
+      EnvironmentVariables = {
+        HOME = config.home.homeDirectory;
+        PATH = "${pkgs.nodejs_22}/bin:${npmPrefix}/bin:/usr/bin:/bin";
+      };
+      WorkingDirectory = config.home.homeDirectory;
+      RunAtLoad = true;
+      KeepAlive = true;
+      ThrottleInterval = 10;
+      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/deepseek-harness.log";
+      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/deepseek-harness.error.log";
+    };
+  };
 
   # Note: All packages are now managed in packages.nix
   # This file only contains program configurations

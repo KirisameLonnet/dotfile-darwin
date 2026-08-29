@@ -6,9 +6,11 @@ let
   latexToolchain = pkgs.texlive.withPackages (ps: with ps; [
     scheme-small
     latexmk
+    chktex
     xetex
     xltxtra
     xifthen
+    ifmtarg
     fontspec
     xecjk
     geometry
@@ -90,6 +92,14 @@ in
 
     # ===== DATABASE TOOLS =====
     sqlite             # SQLite database
+
+    # ===== KUBERNETES =====
+    # 实验室 GPU 集群（五节点 k3s v1.36）的日常操作，见 myNetworkDocs/k3s-user-guide.md
+    kubectl            # Kubernetes CLI
+    kubernetes-helm    # Helm chart 包管理
+    k9s                # 终端 UI，比 kubectl get 循环好用
+    kubectx            # 快速切换 context / namespace（含 kubens）
+    stern              # 跨多个 Pod 同时跟日志
 
     # ===== PROGRAMMING LANGUAGES =====
     rustToolchain      # Rust compiler + cargo + rustfmt (with std sources for rust-analyzer)
