@@ -10,9 +10,11 @@
       cleanup = "none";
       autoUpdate = true; # Keep Homebrew compatible with its live package APIs
       upgrade = true;
+      # Do not hand-roll cleanup flags here. Homebrew 6 marks
+      # `brew bundle install --cleanup` as odisabled (it hard-errors and aborts
+      # activation), and `--zap` without `--force-cleanup` raises a UsageError.
+      # Cleanup is driven by `cleanup` above, which emits the correct flags.
       extraFlags = [
-        "--cleanup"
-        "--zap"
         "--quiet"
       ];
     };
@@ -76,8 +78,6 @@
       # "finder"                   # File manager replacement options
 
       # Media & Productivity (optional)
-      # "spotify"                  # Music streaming
-      "vesktop" # Discord alternative (stable app path for macOS permissions)
       "flutter" # Flutter SDK for cross-platform development
       "cc-switch" # CC Switch GUI app for AI coding CLI provider management
       {
@@ -90,7 +90,76 @@
       }
       "libreoffice" # Office suite (includes soffice CLI)
       # "notion"                   # Note-taking
+
+      # Previously hand-installed apps, taken over in place via
+      # `brew install --cask --adopt` so the existing bundles (and their
+      # granted macOS permissions) were kept rather than reinstalled.
+      "android-studio" # Android IDE
+      "chatgpt" # OpenAI desktop client
+      "figma" # Design tool
+      "jordanbaird-ice" # Ice — menu bar manager
+      "monitorcontrol" # External display brightness/volume control
+      "moonlight" # Game streaming client
+      "motrix" # Download manager
+      "obs" # Screen recording and streaming
+      "playcover-community" # Run iOS apps on Apple silicon
+      "tencent-lemon" # System cleanup utility
+      "tencent-meeting" # Video conferencing
+      "vlc" # Default media player (see ../home-manager/default-apps.nix)
+
+      # Migrated off the Mac App Store (mas cannot drive the App Store on
+      # macOS 15, see the masApps note below).
+      "localsend" # Adopted in place — cask version matched the installed one
+      "telegram" # Replaced the MAS build; messages re-sync from Telegram cloud
+      "wechat" # Replaced the MAS build (sandboxed history intentionally dropped)
+      "qq" # Replaced the MAS build (sandboxed history intentionally dropped)
+
+      # NOT declarable under `caskArgs.require_sha = true` below — these casks
+      # ship `sha256 :no_check` (rolling download URLs), so Homebrew refuses to
+      # install them and activation would fail. Left as manual installs:
+      #   google-chrome, spotify, steam, loopback
+      # Cask disabled upstream (fails macOS Gatekeeper check, 2026-09-01):
+      #   torrent-file-editor, xld
+      # Local build differs from the cask, adopt rejected:
+      #   obsidian (missing obsidian-cli), openmtp (3.2.25 vs 3.3.0),
+      #   balenaetcher (2.1.4 vs 2.1.6)
     ];
+
+    # Mac App Store apps are deliberately NOT declared via `masApps`.
+    #
+    # `mas` 7.0.0 cannot drive the App Store on macOS 15.x: with
+    # `onActivation.upgrade = true`, `brew bundle` runs `mas upgrade` on every
+    # outdated entry, which fails with a blocking "URL is not trusted" dialog.
+    # These apps are also spread across several Apple IDs, so apps bought under
+    # a different account additionally fail with a purchase-ownership error.
+    # Declaring them turns every `darwin-rebuild switch` into a modal-dialog
+    # gauntlet, so the inventory is kept here as documentation only.
+    #
+    # Office stays on the App Store: the cask ships the standalone installer
+    # whose activation goes through a Microsoft 365 sign-in, and re-risking a
+    # working activation is not worth managing three more entries.
+    #
+    # WeChat, QQ and Telegram were migrated off the App Store. Tencent's
+    # standalone builds are sandboxed too and keep the same bundle IDs, so they
+    # reuse the existing ~/Library/Containers/<bundle-id> data — history and
+    # logins carried over intact. Do NOT delete those containers: they are the
+    # live data directories, not leftovers from the MAS builds.
+    #
+    # Current Mac App Store inventory (`mas list` for IDs):
+    #   Amphetamine 937984704      Dark Night 1592844577
+    #   FastZip 1565629813         iCopy 1638023723
+    #   iWall 1214761683           Keynote 409183694
+    #   LocalSend 1661733229       Microsoft Excel 462058435
+    #   Microsoft PowerPoint 462062816
+    #   Microsoft Word 462054704   Numbers 409203825
+    #   Pages 409201541            QQ 451108668
+    #   Shadowrocket 932747118     Steam Link 1246969117
+    #   Telegram 747648890         TeraCopy 1378806557
+    #   Userscripts 1463298887     WeChat 836500024
+    #   WireGuard 1451685025       Xcode 497799835
+    #   Final Cut Pro — has a MAS receipt but `mas list` omits it (other Apple ID)
+    #
+    # These update through the App Store app itself; nothing here manages them.
 
     # Strict cask installation settings
     caskArgs = {

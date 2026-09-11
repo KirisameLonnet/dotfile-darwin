@@ -17,65 +17,37 @@
     };
   };
 
+  # 这个文件只做两件事：声明 inputs，把它们接到 darwinSystem 上。
+  # 具体配置一律在 modules/ 里，包级别的改写（overlay）也归模块层——
+  # nixpkgs.overlays 本来就是模块选项，理由见 README §4.11。
   outputs =
     inputs@{
       self,
       nixpkgs,
       nix-darwin,
       home-manager,
-      ashpipe,
+      ...
     }:
     let
       system = "aarch64-darwin";
+      hostName = "Lonnets-MacBook-Air";
 
-      # Custom packages configuration
-      pkgsConfig = {
-        allowUnfree = true;
-      };
-
-      pkgsOverlays = [
-        # Darwin compatibility for packages that depend on unity-test.
-        (_: prev: {
-          # unity-test fails its C++-compiled tests on darwin; skip checks to keep dependents building.
-          unity-test = prev.unity-test.overrideAttrs (_: {
-            doCheck = false;
-          });
-
-          # Upgrade ONLY claude-code ahead of the pinned nixpkgs, without bumping
-          # the whole nixpkgs input. To bump again: set version + the darwin-arm64
-          # sha256 from https://downloads.claude.ai/claude-code-releases/<ver>/... .
-          claude-code = prev.claude-code.overrideAttrs (_: rec {
-            version = "2.1.220";
-            src = prev.fetchurl {
-              url = "https://downloads.claude.ai/claude-code-releases/${version}/darwin-arm64/claude";
-              sha256 = "8addc857f3fe64d5a0368af9ee50321b50afb4a6918ba3ef018ab84f5dbbe081";
-            };
-          });
-
-          # VS Code 1.129 moved the bundled ripgrep binary into the unpacked ASAR tree.
-          vscode = prev.vscode.overrideAttrs (old: {
-            postPatch =
-              builtins.replaceStrings
-                [ "Contents/Resources/app/node_modules/@vscode/ripgrep-universal" ]
-                [ "Contents/Resources/app/node_modules.asar.unpacked/@vscode/ripgrep-universal" ]
-                old.postPatch;
-          });
-        })
-      ];
-
+      # 全仓库只实例化一次 nixpkgs，靠下面的 `nixpkgs.pkgs` 交给 darwinSystem，
+      # home-manager 再通过 useGlobalPkgs 复用同一份。
+      # （原来是这里 import 一次、模块里再用 nixpkgs.config/overlays 触发第二次，
+      #  等于把整个 nixpkgs 求值两遍。）
       pkgs = import nixpkgs {
         inherit system;
-        config = pkgsConfig;
-        overlays = pkgsOverlays;
+        config.allowUnfree = true;
       };
     in
     {
-      darwinConfigurations."Lonnets-MacBook-Air" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations.${hostName} = nix-darwin.lib.darwinSystem {
         modules = [
-          # Import our modular darwin configuration
+          # 系统层
           ./modules/darwin
 
-          # Home Manager integration
+          # 用户层，作为 nix-darwin 模块集成
           home-manager.darwinModules.home-manager
           {
             home-manager = {
@@ -87,16 +59,15 @@
             };
           }
 
-          # Flake-specific configuration
+          # 只有真正属于 flake 层的东西放这里
           {
+            nixpkgs.pkgs = pkgs;
             system.configurationRevision = self.rev or self.dirtyRev or null;
-            nixpkgs.config = pkgsConfig;
-            nixpkgs.overlays = pkgsOverlays;
           }
         ];
       };
 
-      checks.${system}.darwin = self.darwinConfigurations."Lonnets-MacBook-Air".system;
+      checks.${system}.darwin = self.darwinConfigurations.${hostName}.system;
       formatter.${system} = pkgs.nixfmt-tree;
 
       # Development shell for working on the configuration

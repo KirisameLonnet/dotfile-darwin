@@ -32,7 +32,8 @@ sudo darwin-rebuild switch --flake .
 | 想改的东西 | 编辑这里 | 生效方式 |
 | :--- | :--- | :--- |
 | CLI 工具 / 软件包 | `modules/home-manager/packages/{ai,development,media,network,system,terminal}.nix` | rebuild |
-| GUI 应用、cask 字体 | `modules/darwin/homebrew.nix` | rebuild |
+| GUI 应用、cask 字体、App Store 应用 | `modules/darwin/homebrew.nix`（`casks` / `masApps`） | rebuild |
+| 默认打开方式（媒体文件→VLC） | `modules/home-manager/default-apps.nix` | rebuild |
 | 网络工具、VPN（ZeroTier 等） | `modules/darwin/network.nix` + `modules/home-manager/packages/network.nix` | rebuild |
 | 快捷键 | `config/skhd/skhdrc` | **rebuild**（见下方说明） |
 | 窗口规则 / 布局 / 动画 | `config/yabai/yabairc` | **rebuild**（见下方说明） |
@@ -42,6 +43,8 @@ sudo darwin-rebuild switch --flake .
 | kitty 外观与行为 | `modules/home-manager/terminal.nix` | rebuild |
 | git 身份、tmux、fzf | `modules/home-manager/development.nix` | rebuild |
 | npm 全局 CLI | `development.nix` 顶部的 `npmGlobalPackages` | rebuild |
+| Docker VM 规格（CPU/内存/磁盘） | `colima start --edit` | **不用 rebuild**（见 §4.13） |
+| Docker 相关 CLI / 自启 agent | `packages/development.nix` 的 CONTAINERS 段 / `home-manager/development.nix` | rebuild |
 | macOS 系统偏好（Dock、键盘、手势…） | `modules/darwin/system.nix` | rebuild |
 | Nix 管理的字体 | `modules/darwin/fonts.nix` | rebuild |
 | 自定义打包 | `packages/`（现有示例：`wwan-manager.nix`） | rebuild |
@@ -69,6 +72,7 @@ flake.nix
         ├── editor/nvim.nix         Neovim（LazyVim）
         ├── ui.nix                  yabai/skhd 配置链接、wm-status / wm-reload 脚本
         ├── envdir.nix              direnv + nix-direnv
+        ├── default-apps.nix        duti 绑定默认打开方式（媒体 → VLC）
         └── fastfetch.nix           fastfetch
 ```
 
@@ -81,6 +85,7 @@ flake.nix
 3. **运行时逃生舱** —— 少数刻意留在声明式体系之外的东西：
    - `~/.custom-env/*.env`：zsh 启动时自动 source，放密钥和机器本地变量，改动免 rebuild；
    - `ASHPIPE_ENABLE_ZSH_HOOK=1`：按需启用 ashpipe 的 zsh hook（默认关闭，因为它在 `cd` 时探测远程门户，不可达时会阻塞）。
+   - **colima 的 `~/.colima/default/colima.yaml`**：VM 规格（CPU/内存/磁盘）的事实来源，`colima start --edit` 改，免 rebuild，见 §4.13。
 
 ### 3.3 软件包的四个来源
 
@@ -107,7 +112,33 @@ PATH 顺序保证 **Nix 优先于 Homebrew**；新装包默认走 Nix，除非�
 8. **Homebrew 强制 `require_sha` + 关闭遥测**；`autoUpdate = true` 是刻意的——保持 brew 客户端与其线上 API 兼容。
 9. **Stage Manager、mru-spaces 关闭** —— 与 yabai 的空间管理冲突。
 10. **npm 全局包装进 `~/.local/share/npm`** —— 用户可写前缀，activation 脚本顺带修复 `@openai/codex` 平台包缺 `package.json` 和签名的问题。
-11. **flake 里的两个 overlay** —— `unity-test` 跳过在 darwin 上失败的测试；`vscode` 修正 1.129+ 的 ripgrep 路径。上游修复后可移除。
+11. **`flake.nix` 里没有 overlay，以后也不要加在那儿** —— 曾经有三个 `overrideAttrs`（`unity-test` 关测试、`vscode` 补 ripgrep 路径、`claude-code` 抢跑版本），到 2026-09-11 全部核对为**死代码**：上游早就修好了，三个 override 生成的 derivation 与 stock nixpkgs 逐字节相同，已删除。教训有两条，重要性高于这三个包本身：
+    - **overlay 会静默腐烂**。`builtins.replaceStrings` 找不到目标时不报错、只是原样返回；`overrideAttrs` 覆盖一个上游已经修好的属性同样悄无声息。`claude-code` 那条更糟——它把版本钉死在 `2.1.220`，nixpkgs 一旦走到 2.2.x，这个"为了抢新版"写的 override 就反过来变成降级锁，而且不会有任何提示。**每次 `nix flake update` 之后要主动验证 overlay 是否还有必要**，方法是比对 drvPath：
+
+      ```bash
+      nix eval --raw .#darwinConfigurations.Lonnets-MacBook-Air.pkgs.<pkg>.drvPath
+      # 与不带 overlay 的 stock nixpkgs 对比，相同即说明这条 override 已经是死代码
+      ```
+
+    - **真要加 overlay，加在模块层**（`modules/darwin/` 里的 `nixpkgs.overlays`），不要塞回 `flake.nix`。`nixpkgs.overlays` 本来就是模块选项；`flake.nix` 的职责只有"声明 inputs + 接线"，一旦开始在里面写包的构建细节，层级就塌了——这也是 `packages/`（自定义打包）和 `modules/`（配置）分开的同一条理由。
+12. **`nixpkgs.pkgs` 而不是 `nixpkgs.config` + `nixpkgs.overlays`**（`flake.nix`）—— 后者会让 nix-darwin 自己再 `import nixpkgs` 一次，加上 `let` 里给 formatter/devShell 用的那份，整个 nixpkgs 被求值两遍。改成把已经实例化好的 `pkgs` 传进去，全仓库只剩一份，home-manager 再靠 `useGlobalPkgs` 复用。注意：设了 `nixpkgs.pkgs` 之后 `nixpkgs.config` 会被忽略，`allowUnfree` 要写在 `import nixpkgs` 那里。
+13. **Docker：Nix 只管"服务跑不跑"，colima 自己管"VM 长什么样"**（`home-manager/development.nix`）—— 刻意的半托管。
+    - **没有 Docker Desktop**。daemon 跑在 `colima` 拉起的 Linux 虚拟机里，Nix 装的是 `colima` + `docker-client`（纯客户端）+ compose/buildx；
+    - **`darwin-rebuild switch` 之后不需要再手动跑任何东西**：`launchd.agents.colima` 在 activation 时被 bootstrap，登录时也会自启；
+    - **agent 刻意不带任何规格参数**。不给 flag 时 `colima start` 读 `~/.colima/default/colima.yaml`，那才是 CPU / 内存 / 磁盘 / vm-type 的事实来源，用 `colima start --edit` 改，改完不用 rebuild。**一旦在 nix 里写死 `--cpus 4`，VM 规格就被声明式接管了**，那正是不想要的；
+    - `~/.colima`、`~/.docker/config.json`、contexts、镜像、卷、容器，rebuild 一概不碰；
+    - **`--foreground` + `KeepAlive.SuccessfulExit = false`**：前者让 launchd 真正监管进程（默认的 `colima start` 自己 daemonize，launchd 会误判成启动失败）；后者让崩溃能自动拉起，而手动 `colima stop`（正常退出）不会被立刻拽回来——想省内存仍然停得掉；
+    - activation 里那句 `launchctl kickstart`（**不带 `-k`**）补的是一个具体缺口：plist 没变且 agent 仍是 loaded 时，home-manager 不会重新 bootstrap，于是"手动停过 → 再 rebuild"不会把 VM 带回来。kickstart 没跑就起、在跑就什么都不做；加了 `-k` 则会每次 rebuild 杀掉健康的 VM 重来；
+    - `~/.docker/cli-plugins/` 里两个符号链接（compose、buildx）是唯一被 Nix 管的 docker 配置——docker CLI 只认这个目录和几个 `/usr/...` 路径，不链进去 `docker compose` 子命令就不存在。**只链这两个文件，不接管整个 `~/.docker`**，因为凭证和 context 状态也在那儿，必须保持可写；
+    - `colima start` 会自动创建并切换到名为 `colima` 的 docker context，所以不需要设 `DOCKER_HOST`。
+
+    首次 switch 之后 VM 要下载并初始化 Linux 镜像，耗时几分钟且全在后台，进度只能从日志看：
+
+    ```bash
+    tail -f ~/Library/Logs/colima.log     # 首次初始化进度
+    colima status                          # VM 状态
+    launchctl print gui/$(id -u)/org.nix-community.home.colima   # agent 状态
+    ```
 
 ## 5. 新机器引导
 
@@ -140,6 +171,8 @@ PATH 顺序保证 **Nix 优先于 Homebrew**；新装包默认走 Nix，除非�
 | 改了 skhdrc/yabairc 没生效 | 需要 rebuild，不是 `wm-reload`（原因见第 2 节） |
 | `too many open files` | maxfiles daemon 未生效，重启后再查 `launchctl limit maxfiles` |
 | `cd` 时终端卡住 | 误开了 ashpipe zsh hook 且门户不可达，去掉 `ASHPIPE_ENABLE_ZSH_HOOK` |
+| `docker: Cannot connect to the Docker daemon` | colima VM 没起。先 `colima status`，再看 `~/Library/Logs/colima.error.log`；agent 本身的状态用 `launchctl print gui/$(id -u)/org.nix-community.home.colima`。首次 switch 后 VM 要几分钟才初始化好，见 §4.13 |
+| `docker: 'compose' is not a docker command` | `~/.docker/cli-plugins/` 里的链接丢了（手工删过 `~/.docker`？），rebuild 一次即可重建 |
 
 ---
 
@@ -239,5 +272,6 @@ Flake 输入：`nixpkgs`（unstable）、`nix-darwin`、`home-manager`、[`ashpi
 - **编辑器**：Neovim = [LazyVim](https://www.lazyvim.org/) + extras（TypeScript / Python / Nix / JSON / Rust），Catppuccin 透明背景，leader 为 `Space`；另有 VS Code、vim
 - **语言**：Rust（自制工具链 + rust-analyzer）、Go、Node.js 22、Python 3（+ uv）；嵌入式：arduino-cli、avrdude、picocom、clangd
 - **AI CLI**：claude-code、github-copilot-cli、codex（npm）、gemini（npx 别名）
+- **容器**：colima（Linux VM，launchd agent 自启）+ docker CLI / compose / buildx / lazydocker；无 Docker Desktop，VM 规格与运行时状态不受 Nix 管理（§4.13）
 - **系统工具**：htop/btop、fastfetch、gnupg、mas、m-cli、nix-tree、nix-output-monitor、WWAN Manager（自定义打包，QDC507 拨号 GUI）
 - **macOS 定制**：深色模式、Dock 自动隐藏、快速按键重复、禁用自动大写/智能引号、截图存 `~/Pictures/Screenshots`、Touch ID sudo、四指手势（三指保留给文本选择）

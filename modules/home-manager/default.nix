@@ -9,6 +9,7 @@
     ./development.nix
     ./ui.nix
     ./envdir.nix
+    ./default-apps.nix # Default app associations (VLC for media)
     ./editor/nvim.nix
     ./fastfetch.nix           # Custom fastfetch configuration
   ];

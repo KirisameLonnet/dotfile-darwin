@@ -101,6 +101,16 @@ in
     kubectx            # 快速切换 context / namespace（含 kubens）
     stern              # 跨多个 Pod 同时跟日志
 
+    # ===== CONTAINERS =====
+    # 没有 Docker Desktop：daemon 跑在 colima 拉起的 Linux 虚拟机里。
+    # 这里只装二进制；开机自启的 launchd agent 和 CLI 插件链接在
+    # ../development.nix，VM 规格与运行时状态不归 Nix 管，见 README §4.12。
+    colima             # Linux VM（内含 lima/qemu/krunkit），docker daemon 的宿主
+    docker-client      # docker CLI（仅客户端，不含 daemon）
+    docker-compose     # compose v2
+    docker-buildx      # buildx
+    lazydocker         # 终端 UI，比 docker ps 循环好用
+
     # ===== PROGRAMMING LANGUAGES =====
     rustToolchain      # Rust compiler + cargo + rustfmt (with std sources for rust-analyzer)
     rust-analyzer      # Rust language server
