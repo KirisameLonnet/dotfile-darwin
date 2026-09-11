@@ -31,8 +31,9 @@ sudo darwin-rebuild switch --flake .
 
 | 想改的东西 | 编辑这里 | 生效方式 |
 | :--- | :--- | :--- |
-| CLI 工具 / 软件包 | `modules/home-manager/packages/{ai,development,media,system,terminal}.nix` | rebuild |
+| CLI 工具 / 软件包 | `modules/home-manager/packages/{ai,development,media,network,system,terminal}.nix` | rebuild |
 | GUI 应用、cask 字体 | `modules/darwin/homebrew.nix` | rebuild |
+| 网络工具、VPN（ZeroTier 等） | `modules/darwin/network.nix` + `modules/home-manager/packages/network.nix` | rebuild |
 | 快捷键 | `config/skhd/skhdrc` | **rebuild**（见下方说明） |
 | 窗口规则 / 布局 / 动画 | `config/yabai/yabairc` | **rebuild**（见下方说明） |
 | Shell 别名、环境变量 | `modules/home-manager/shell.nix` | rebuild |
@@ -58,6 +59,7 @@ flake.nix
     │   ├── system.nix              macOS defaults、键盘/触控板、launchd、Touch ID sudo
     │   ├── fonts.nix               Nerd Fonts 等（Nix 管理）
     │   ├── homebrew.nix            Homebrew 声明式管理（brews + casks）
+    │   ├── network.nix             网络栈：ZeroTier 等 VPN / 网络类 brew 与 cask
     │   └── window-manager.nix      yabai + skhd 服务
     └── modules/home-manager/     用户层（$HOME 权限域，作为 nix-darwin 模块集成）
         ├── packages/               按类别拆分的软件包清单

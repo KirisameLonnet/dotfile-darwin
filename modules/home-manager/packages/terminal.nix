@@ -22,9 +22,7 @@
     yazi # Modern file manager
 
     # ===== NETWORK TOOLS =====
-    httpie # Modern HTTP client
-    nmap # Network discovery
-    bandwhich # Network utilization monitor
+    # Moved to ./network.nix
 
     # ===== DATA PROCESSING =====
     jq # JSON processor

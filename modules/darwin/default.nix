@@ -5,6 +5,7 @@
     ./system.nix
     ./fonts.nix
     ./homebrew.nix
+    ./network.nix
     ./window-manager.nix
   ];
 

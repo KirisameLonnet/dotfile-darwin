@@ -35,7 +35,7 @@
       # Audio & Media - macOS integration tools
       "switchaudio-osx" # Audio device switching
       "nowplaying-cli" # Media information
-      "ifstat" # Network statistics
+      # Note: network formulae (ifstat, ...) are declared in ./network.nix
 
       # Terminal & Development Tools
       "lua" # For SbarLua configuration
@@ -80,6 +80,10 @@
       "vesktop" # Discord alternative (stable app path for macOS permissions)
       "flutter" # Flutter SDK for cross-platform development
       "cc-switch" # CC Switch GUI app for AI coding CLI provider management
+      {
+        name = "apifox"; # API documentation, debugging and testing client
+        greedy = true; # Upgrade despite Homebrew auto_updates flag
+      }
       {
         name = "codex-app"; # OpenAI Codex desktop app for managing coding agents
         greedy = true; # Upgrade despite Homebrew auto_updates flag
