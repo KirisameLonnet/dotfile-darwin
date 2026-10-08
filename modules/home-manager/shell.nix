@@ -4,6 +4,7 @@
   home.sessionPath = [
     "$HOME/.local/bin"
     "$HOME/.local/share/npm/bin"
+    "$HOME/.local/share/pnpm" # pnpm 的全局 bin 目录，见下方 PNPM_HOME
   ];
 
   # Shell configuration
@@ -29,6 +30,15 @@
 
       # Rust standard library source for rust-analyzer
       RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
+
+      # pnpm 全局安装目录。显式设定是必要的：不设的话 `pnpm add -g` 会让你去跑
+      # `pnpm setup`，而它要往 .zshrc 里追加 PATH——那个文件是 home-manager 管的
+      # 只读符号链接，改不动。路径对齐 npm 全局包的 ~/.local/share/npm。
+      PNPM_HOME = "$HOME/.local/share/pnpm";
+
+      # 多集群并存：lab 集群（~/.kube/config）+ somark-baremetal。
+      # kubectl config get-contexts 能同时看到两边，用 use-context 或 --context 切。
+      KUBECONFIG = "$HOME/.kube/config:$HOME/.kube/somark-baremetal.yaml";
 
       # Gemini CLI Configuration
       # API key should be set in ~/.gemini/.env file
@@ -81,6 +91,15 @@
       gemini = "npx @google/gemini-cli";
       gm = "npx @google/gemini-cli";
       gemini-chat = "npx @google/gemini-cli -i";
+
+      # dsh web 是个 launchd 常驻服务（见 development.nix），改了 nix 要先
+      # darwin-rebuild switch 再用这个重启，光 kickstart 不会换 store 路径。
+      dsh-restart = "launchctl kickstart -k gui/501/org.nix-community.home.deepseek-harness";
+      dsh-log = "tail -f ~/Library/Logs/deepseek-harness.log";
+
+      # somark K8s 隧道（launchd 常驻，见 development.nix）
+      sk-restart = "launchctl kickstart -k gui/501/org.nix-community.home.somark-tunnel";
+      sk-log = "tail -f ~/Library/Logs/somark-tunnel.error.log";
     };
 
     initContent = ''
@@ -138,12 +157,19 @@
         fi
       }
 
+      # somark-baremetal 集群的 kubectl 简写。隧道由 launchd agent 常驻
+      # （见 development.nix 的 launchd.agents.somark-tunnel），这里不用管。
+      # 连不上先看 sk-log。
+      function sk() {
+        kubectl --context kubernetes-admin@somark-baremetal "$@"
+      }
+
       # macOS specific settings
       export BROWSER="open"
 
       # Normalize PATH to the nix-darwin per-user profile and avoid stale standalone Home Manager links taking priority.
       path=(''${path:#$HOME/.nix-profile/bin})
-      path=(/etc/profiles/per-user/lonnetkirisame/bin $HOME/.local/bin $HOME/.local/share/npm/bin /opt/homebrew/bin $path)
+      path=(/etc/profiles/per-user/lonnetkirisame/bin $HOME/.local/bin $HOME/.local/share/npm/bin $HOME/.local/share/pnpm /opt/homebrew/bin $path)
       export PATH
 
       # ashpipe: SSH Native Agent Bridge

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# ============================================================================
+# JankyBorders 配置 - 聚焦窗口边框
+# ============================================================================
+# yabai 7.x 移除了原生 window_border,使用 JankyBorders 替代
+# 文档: https://github.com/FelixKratz/JankyBorders
+# 需要权限: 辅助功能 (Accessibility) + 屏幕录制 (Screen Recording)
+#
+# 注意: borders 1.9+ 的 bordersrc 是通过执行 `borders` 命令传参生效,
+# 不是旧版的 border_color=xxx 变量形式。
+# 使用绝对路径,因为 launchd 环境的 PATH 不含 /run/current-system/sw/bin
+# ============================================================================
+
+options=(
+  style=round
+  width=10.0
+  hidpi=on
+  active_color='glow(0xff66ccff)'   # Cirno 蓝 光晕效果
+  inactive_color=0xff454759         # Catppuccin Mocha surface1
+)
+
+/run/current-system/sw/bin/borders "${options[@]}"

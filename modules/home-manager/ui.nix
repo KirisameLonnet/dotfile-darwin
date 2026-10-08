@@ -15,6 +15,11 @@
     recursive = true;
   };
 
+  home.file.".config/borders" = {
+    source = ../../config/borders;
+    recursive = true;
+  };
+
   # System management scripts (managed by nix)
   home.file.".local/bin/wm-status" = {
     text = ''
@@ -37,6 +42,13 @@
           echo "❌ skhd: Not running"
       fi
 
+      # Check borders
+      if pgrep -x borders > /dev/null; then
+          echo "✅ borders: Running (PID: $(pgrep -x borders))"
+      else
+          echo "❌ borders: Not running"
+      fi
+
       echo ""
       echo "🔧 Quick Commands:"
       echo "  wm-reload  - Restart window manager services"
@@ -57,6 +69,10 @@
       # Restart skhd
       echo "⌨️  Restarting skhd..."
       launchctl kickstart -k "gui/$UID/org.nixos.skhd"
+
+      # Restart borders
+      echo "🎨 Restarting borders..."
+      launchctl kickstart -k "gui/$UID/org.nixos.borders"
 
       # Wait a moment
       sleep 2

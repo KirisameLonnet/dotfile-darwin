@@ -25,6 +25,8 @@ sudo darwin-rebuild check --flake .
 sudo darwin-rebuild switch --flake .
 ```
 
+Ait 由 `modules/home-manager/ait.nix` 管理：每次 activation、登录和每日检查 [ait-app/ait nightly](https://github.com/ait-app/ait/releases/tag/nightly)，校验 GitHub 资产 SHA-256、发布文件 `SHA256SUMS` 和应用代码签名后安装到 `~/Applications/Ait.app`。只按资产 ID 和摘要识别新构建，不解析或比较版本号；版本号不变、回退或格式变化都不影响更新。nightly 的 macOS 包为 ad-hoc 签名、未经公证。运行中暂缓替换；手动检查用 `~/.local/bin/ait-update`，日志位于 `~/Library/Logs/ait-update{,.error}.log`。这是运行时滚动安装，应用版本不受 `flake.lock` 锁定，也不随 Nix generation 回滚。
+
 其余命令（build / fmt / develop 等）见[附录 A](#附录-a命令速查)。
 
 ## 2. 改什么，去哪儿改
@@ -91,10 +93,10 @@ flake.nix
 
 | 来源 | 用于 | 例子 |
 | :--- | :--- | :--- |
-| **Nix**（默认） | 一切 CLI 与开发工具 | eza、ripgrep、rustc、go、claude-code、vscode |
-| **Homebrew cask** | GUI .app（需要稳定路径给 macOS 权限系统）、Apple 字体、内核扩展 | vesktop、macfuse、font-sf-pro、flutter、libreoffice |
+| **Nix**（默认） | 一切 CLI 与开发工具 | eza、ripgrep、rustc、go、claude-code |
+| **Homebrew cask** | GUI .app（需要稳定路径给 macOS 权限系统，**或需要可写的 app bundle**）、Apple 字体、内核扩展 | vesktop、vscode、macfuse、font-sf-pro、flutter、libreoffice |
 | **Homebrew brew** | macOS 专属或 Nix 中缺失的 CLI | switchaudio-osx、nowplaying-cli |
-| **npm 全局**（activation 脚本） | 迭代太快、不值得等 nixpkgs 的 CLI | wrangler、@openai/codex |
+| **npm 全局**（activation 脚本） | 迭代太快、不值得等 nixpkgs 的 CLI | wrangler、@openai/codex@latest |
 
 PATH 顺序保证 **Nix 优先于 Homebrew**；新装包默认走 Nix，除非命中后三类的理由。
 
@@ -111,7 +113,7 @@ PATH 顺序保证 **Nix 优先于 Homebrew**；新装包默认走 Nix，除非�
 7. **vesktop 用 cask 而不是 Nix** —— macOS 的权限（TCC）绑定应用路径，Nix store 路径每次更新都变，会反复丢权限。
 8. **Homebrew 强制 `require_sha` + 关闭遥测**；`autoUpdate = true` 是刻意的——保持 brew 客户端与其线上 API 兼容。
 9. **Stage Manager、mru-spaces 关闭** —— 与 yabai 的空间管理冲突。
-10. **npm 全局包装进 `~/.local/share/npm`** —— 用户可写前缀，activation 脚本顺带修复 `@openai/codex` 平台包缺 `package.json` 和签名的问题。
+10. **npm 全局包装进 `~/.local/share/npm`** —— 用户可写前缀，Codex CLI 使用 npm 的 `latest` 标签；activation 脚本顺带修复 `@openai/codex` 平台包缺 `package.json` 和签名的问题。Codex 桌面应用由 `homebrew.nix` 的 `codex-app` cask 更新；本仓库的模型和推理强度在 `.codex/config.toml` 中设置。
 11. **`flake.nix` 里没有 overlay，以后也不要加在那儿** —— 曾经有三个 `overrideAttrs`（`unity-test` 关测试、`vscode` 补 ripgrep 路径、`claude-code` 抢跑版本），到 2026-09-11 全部核对为**死代码**：上游早就修好了，三个 override 生成的 derivation 与 stock nixpkgs 逐字节相同，已删除。教训有两条，重要性高于这三个包本身：
     - **overlay 会静默腐烂**。`builtins.replaceStrings` 找不到目标时不报错、只是原样返回；`overrideAttrs` 覆盖一个上游已经修好的属性同样悄无声息。`claude-code` 那条更糟——它把版本钉死在 `2.1.220`，nixpkgs 一旦走到 2.2.x，这个"为了抢新版"写的 override 就反过来变成降级锁，而且不会有任何提示。**每次 `nix flake update` 之后要主动验证 overlay 是否还有必要**，方法是比对 drvPath：
 
@@ -129,7 +131,7 @@ PATH 顺序保证 **Nix 优先于 Homebrew**；新装包默认走 Nix，除非�
     - `~/.colima`、`~/.docker/config.json`、contexts、镜像、卷、容器，rebuild 一概不碰；
     - **`--foreground` + `KeepAlive.SuccessfulExit = false`**：前者让 launchd 真正监管进程（默认的 `colima start` 自己 daemonize，launchd 会误判成启动失败）；后者让崩溃能自动拉起，而手动 `colima stop`（正常退出）不会被立刻拽回来——想省内存仍然停得掉；
     - activation 里那句 `launchctl kickstart`（**不带 `-k`**）补的是一个具体缺口：plist 没变且 agent 仍是 loaded 时，home-manager 不会重新 bootstrap，于是"手动停过 → 再 rebuild"不会把 VM 带回来。kickstart 没跑就起、在跑就什么都不做；加了 `-k` 则会每次 rebuild 杀掉健康的 VM 重来；
-    - `~/.docker/cli-plugins/` 里两个符号链接（compose、buildx）是唯一被 Nix 管的 docker 配置——docker CLI 只认这个目录和几个 `/usr/...` 路径，不链进去 `docker compose` 子命令就不存在。**只链这两个文件，不接管整个 `~/.docker`**，因为凭证和 context 状态也在那儿，必须保持可写；
+    - **`~/.docker` 整个目录 Nix 一个字节都不碰**。不用往 `cli-plugins/` 链 compose/buildx：nixpkgs 的 `docker-client` 是 `makeBinaryWrapper`，已经把两个插件包的 libexec 塞进 `DOCKER_CLI_PLUGIN_EXTRA_DIRS`。验证方法 `DOCKER_CONFIG=$(mktemp -d) docker compose version`，绕开 `~/.docker` 后插件照样解析得到；
     - `colima start` 会自动创建并切换到名为 `colima` 的 docker context，所以不需要设 `DOCKER_HOST`。
 
     首次 switch 之后 VM 要下载并初始化 Linux 镜像，耗时几分钟且全在后台，进度只能从日志看：
@@ -138,6 +140,30 @@ PATH 顺序保证 **Nix 优先于 Homebrew**；新装包默认走 Nix，除非�
     tail -f ~/Library/Logs/colima.log     # 首次初始化进度
     colima status                          # VM 状态
     launchctl print gui/$(id -u)/org.nix-community.home.colima   # agent 状态
+    ```
+
+14. **VS Code 走 cask 而不是 Nix**（`homebrew.nix` 的 `visual-studio-code`）—— 2026-09-11 从 `packages/development.nix` 迁出。理由与 §4.7 的 vesktop 同源，但更硬：**这类扩展靠原地改写 app bundle 生效，和只读的 `/nix/store` 是正面冲突，不是权限配错**。
+    - The Doki Theme（`out/ENV.js`）往 `<appRoot>/out/vs/workbench/workbench.desktop.main.css` **追加** CSS，并在同目录留 `.copy` 备份；Custom CSS and JS Loader 则 patch `workbench.desktop.main.js`。两者随后都会让 `out/CheckSumService.js` 重算 `product.json` 的 `checksums`，好压掉"安装已损坏"横幅；
+    - 它们的安装向导会提示你 `sudo chown -R $(whoami) /nix/store/...-vscode-*/...`。**不要照做**：store 归 root 只读是 Nix 的核心不变量，而你是 `trusted-users` 成员且跑 daemon 模式，把 store path 交给自己等于开一条本地提权面。何况改完也留不住——vscode 一升级 store path 的 hash 就变，补丁蒸发；迁移前 `vscode-1.101.2` 和 `vscode-1.129.1` **两个 path 都已被改到 `nix-store --verify-path` 报 modified**，正是反复重打补丁的痕迹；
+    - **不加 `greedy`**：cask 是 `auto_updates`，`brew bundle` 在 `onActivation.upgrade` 时跳过它，版本交给 VS Code 自己滚。这是有意的——否则 brew 和 VS Code 的自更新器会抢着重写同一个 bundle，把扩展打的补丁冲掉；
+    - `code` CLI 不用额外配：cask 自带 binary artifact，链到 `/opt/homebrew/bin/code`，而该目录已在 `shell.nix` 的 PATH 里；
+    - 设置和扩展都在 `~/.vscode` 与 `~/Library/Application Support/Code`，跟安装位置无关，迁移不丢；
+    - **代价**：vscode 版本不再锁在 `flake.lock` 里。这是换"扩展能用"付的钱，别再想着把它搬回 Nix——搬回去这两个扩展必然失效。
+
+15. **somark K8s 走常驻 SOCKS5 隧道，而不是每次手动起**（`home-manager/development.nix` 的 `launchd.agents.somark-tunnel`）—— 2026-09-17。
+    - **为什么是 `-D` 而不是 `-L`**：集群 API 证书的 SAN 是 `eva` / `kubernetes` / `10.96.0.1` / `192.168.7.201` / `192.168.7.200`，**不含 `127.0.0.1`**。端口转发会让 kubectl 去连 `https://127.0.0.1:xxxx`，TLS 必然对不上，只能靠 `tls-server-name` 或 `insecure-skip-tls-verify` 绕。走 SOCKS 则 kubeconfig 里的 `server` 仍写真实地址 `https://192.168.7.200:8443`，**证书校验原样通过，一个绕过都不需要**；
+    - **影响面只有这一个集群**：`proxy-url: socks5://127.0.0.1:11080` 写在 `~/.kube/somark-baremetal.yaml` 的 cluster 条目里，不是环境变量。lab 集群和其它所有流量都不经过这条隧道；
+    - **多集群并存靠 `KUBECONFIG` 串联**（`shell.nix`）：`~/.kube/config:~/.kube/somark-baremetal.yaml`，`kubectl config get-contexts` 两边都看得到，用 `--context` 或 `use-context` 切；
+    - **刻意不加 `-f`**：launchd 要进程留在前台才能监管，ssh 自己 daemonize 会被误判成"启动即退出"然后被 `KeepAlive` 无限重拉（同 §4.13 colima 的 `--foreground`）；
+    - **三个 `-o` 各有分工**：`ExitOnForwardFailure=yes` 让端口被占时直接退出交给 `KeepAlive` 重试，而不是留一个连上了却没在转发的假隧道；`ServerAliveInterval=30` + `CountMax=3` 让断网 ~90s 内进程退出才有机会重连，否则 TCP 僵住的表现是 kubectl 长时间挂起而不是报错；`BatchMode=yes` 让 host key 变更这类交互提示直接失败进日志，不在无人看的后台挂死；
+    - 用 `/usr/bin/ssh` 而不是 `pkgs.openssh`，为的是走 `~/.ssh/config` 里的 `kepler3` 别名（HostName/Port/User）。身份是无 passphrase 的 `id_ed25519`，正常路径不依赖 ssh-agent；
+    - 项目里那个 `somark-tunnel.sh up/down/test` 仍然能用（同一个端口），但**两者不要同时起**——后起的那个会因 `ExitOnForwardFailure` 失败。
+
+    ```bash
+    sk get nodes                              # = kubectl --context kubernetes-admin@somark-baremetal
+    sk-log                                     # 隧道报错日志
+    sk-restart                                 # 重启隧道 agent
+    launchctl print gui/$(id -u)/org.nix-community.home.somark-tunnel
     ```
 
 ## 5. 新机器引导
@@ -172,7 +198,8 @@ PATH 顺序保证 **Nix 优先于 Homebrew**；新装包默认走 Nix，除非�
 | `too many open files` | maxfiles daemon 未生效，重启后再查 `launchctl limit maxfiles` |
 | `cd` 时终端卡住 | 误开了 ashpipe zsh hook 且门户不可达，去掉 `ASHPIPE_ENABLE_ZSH_HOOK` |
 | `docker: Cannot connect to the Docker daemon` | colima VM 没起。先 `colima status`，再看 `~/Library/Logs/colima.error.log`；agent 本身的状态用 `launchctl print gui/$(id -u)/org.nix-community.home.colima`。首次 switch 后 VM 要几分钟才初始化好，见 §4.13 |
-| `docker: 'compose' is not a docker command` | `~/.docker/cli-plugins/` 里的链接丢了（手工删过 `~/.docker`？），rebuild 一次即可重建 |
+| `sk`/kubectl 连 somark 超时或 `connection refused` | 隧道 agent 没在跑。`sk-log` 看报错（host key 变更、kepler3 不通都在这里），`sk-restart` 重启；别忘了检查有没有手动的 `somark-tunnel.sh` 占着 11080。见 §4.15 |
+| `docker: 'compose' is not a docker command` | 多半是 PATH 上抢到了别的 docker（`which -a docker` 查）。Nix 这个 wrapper 自带插件路径，不依赖 `~/.docker/cli-plugins` |
 
 ---
 
@@ -260,8 +287,10 @@ Flake 输入：`nixpkgs`（unstable）、`nix-darwin`、`home-manager`、[`ashpi
 | `gemini` / `gm` / `gemini-chat` | `npx @google/gemini-cli` |
 | `reload` | `source ~/.zshrc` |
 | `showfiles` / `hidefiles` | Finder 显示 / 隐藏隐藏文件 |
+| `dsh-restart` / `dsh-log` | 重启 / 跟踪 DeepSeek Harness agent |
+| `sk-restart` / `sk-log` | 重启 / 跟踪 somark K8s 隧道 agent（§4.15） |
 
-函数：`mkcd`（建目录并进入）、`extract`（通用解压）。zsh 为 vi 模式；git 自身另有 `st` `co` `br` `ci` `lg` `unstage` `undo` 等别名（`development.nix`）。
+函数：`mkcd`（建目录并进入）、`extract`（通用解压）、`sk`（= `kubectl --context kubernetes-admin@somark-baremetal`，§4.15）。zsh 为 vi 模式；git 自身另有 `st` `co` `br` `ci` `lg` `unstage` `undo` 等别名（`development.nix`）。
 
 </details>
 
@@ -269,9 +298,10 @@ Flake 输入：`nixpkgs`（unstable）、`nix-darwin`、`home-manager`、[`ashpi
 
 - **终端**：kitty（JetBrainsMono Nerd Font 14pt，Catppuccin Mocha，80% 不透明 + 背景模糊）、tmux（前缀 `Ctrl+A`）、zellij
 - **Shell**：zsh（vi 模式、自动建议、语法高亮）+ Starship 双行提示符 + direnv/nix-direnv + fzf（fd 后端、bat/tree 预览）
-- **编辑器**：Neovim = [LazyVim](https://www.lazyvim.org/) + extras（TypeScript / Python / Nix / JSON / Rust），Catppuccin 透明背景，leader 为 `Space`；另有 VS Code、vim
-- **语言**：Rust（自制工具链 + rust-analyzer）、Go、Node.js 22、Python 3（+ uv）；嵌入式：arduino-cli、avrdude、picocom、clangd
+- **编辑器**：Neovim = [LazyVim](https://www.lazyvim.org/) + extras（TypeScript / Python / Nix / JSON / Rust），Catppuccin 透明背景，leader 为 `Space`；另有 VS Code（cask，见 §4.14）、vim
+- **语言**：Rust（自制工具链 + rust-analyzer）、Go、Node.js 22（+ pnpm，全局目录 `~/.local/share/pnpm`）、Python 3（+ uv）；嵌入式：arduino-cli、avrdude、picocom、clangd
 - **AI CLI**：claude-code、github-copilot-cli、codex（npm）、gemini（npx 别名）
 - **容器**：colima（Linux VM，launchd agent 自启）+ docker CLI / compose / buildx / lazydocker；无 Docker Desktop，VM 规格与运行时状态不受 Nix 管理（§4.13）
+- **Kubernetes**：kubectl / helm / k9s / kubectx；`KUBECONFIG` 串联 lab 集群与 somark-baremetal，后者经常驻 SOCKS5 隧道访问（§4.15）
 - **系统工具**：htop/btop、fastfetch、gnupg、mas、m-cli、nix-tree、nix-output-monitor、WWAN Manager（自定义打包，QDC507 拨号 GUI）
 - **macOS 定制**：深色模式、Dock 自动隐藏、快速按键重复、禁用自动大写/智能引号、截图存 `~/Pictures/Screenshots`、Touch ID sudo、四指手势（三指保留给文本选择）

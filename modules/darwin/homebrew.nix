@@ -65,6 +65,20 @@
       "font-victor-mono" # Victor Mono (cursive italics)
       "font-cascadia-code" # Microsoft's programming font
 
+      # VS Code —— 刻意不走 Nix，见 README §4.14。
+      # The Doki Theme 和 Custom CSS and JS Loader 都靠原地改写 app bundle 生效
+      # （追加 workbench.desktop.main.css、patch workbench.desktop.main.js、
+      # 重算 product.json 的 checksums），需要一个可写且路径稳定的安装位置，
+      # 与只读的 /nix/store 正面冲突。理由与 §4.7 的 vesktop 同源。
+      #
+      # 不加 greedy：cask 是 auto_updates，brew bundle 在 onActivation.upgrade
+      # 时会跳过它，版本由 VS Code 自己滚——这正好，免得 brew 和它的自更新器
+      # 抢着改同一个 bundle，把扩展打的补丁冲掉。
+      #
+      # cask 自带 binary artifact，把 code CLI 链到 /opt/homebrew/bin/code，
+      # 而 /opt/homebrew/bin 已在 shell.nix 的 PATH 里，所以 `code` 命令照常可用。
+      "visual-studio-code"
+
       # System Integration Applications
       "marta" # File manager replacement options
       {

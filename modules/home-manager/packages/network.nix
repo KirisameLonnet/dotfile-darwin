@@ -10,6 +10,7 @@
     # ===== REMOTE ACCESS =====
     mosh               # Roaming-friendly SSH replacement
     sshfs              # SSH filesystem
+    sshs               # TUI host picker over ~/.ssh/config
 
     # ===== HTTP CLIENTS =====
     httpie             # Modern HTTP client

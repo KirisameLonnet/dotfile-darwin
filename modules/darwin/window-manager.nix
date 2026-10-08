@@ -30,6 +30,7 @@
   environment.systemPackages = with pkgs; [
     yabai # 平铺窗口管理器
     skhd # 简单快捷键守护进程
+    jankyborders # 聚焦窗口边框 (yabai 7.x 移除了原生 window_border)
   ];
 
   # 启用 yabai 和 skhd 服务
@@ -57,6 +58,26 @@
   launchd.user.agents."org.nixos.skhd".serviceConfig = {
     Nice = -20;
     ProcessType = "Interactive";
+  };
+
+  # JankyBorders - 聚焦窗口边框守护进程
+  # yabai 7.x 移除了原生边框功能,改用 JankyBorders 绘制
+  # 配置单一来源: config/borders/bordersrc (与 skhd 的 skhdConfig 模式一致)
+  # 注意:
+  # - nix-darwin 会自动给 key 加 org.nixos. 前缀,不要写全名
+  # - borders 无参启动时不会可靠地执行 ~/.config/borders/bordersrc,
+  #   所以这里显式用 bash 执行 nix store 中的配置副本
+  # - bordersrc 内部用绝对路径调用 borders,因为 launchd 的 PATH 很精简
+  launchd.user.agents.borders.serviceConfig = {
+    ProgramArguments = [
+      "/bin/bash"
+      "${pkgs.writeText "bordersrc" (builtins.readFile ../../config/borders/bordersrc)}"
+    ];
+    RunAtLoad = true;
+    KeepAlive = true;
+    Nice = -20;
+    ProcessType = "Interactive";
+    LowPriorityIO = false;
   };
 
   # 增强的窗口管理默认设置

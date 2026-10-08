@@ -13,6 +13,9 @@
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
 
+  # Local time zone (automatically observes UK daylight saving time).
+  time.timeZone = "Europe/London";
+
   # Users and primary user setting
   users.users.lonnetkirisame = {
     name = "lonnetkirisame";

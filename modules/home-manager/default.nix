@@ -7,6 +7,7 @@
     ./shell.nix
     ./terminal.nix
     ./development.nix
+    ./ait.nix # ait-app/ait nightly, activation + daily update
     ./ui.nix
     ./envdir.nix
     ./default-apps.nix # Default app associations (VLC for media)

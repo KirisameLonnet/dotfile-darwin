@@ -88,7 +88,8 @@ in
     # ===== TEXT EDITORS =====
     # neovim is configured via programs.neovim in ../editor/nvim.nix
     vim                # Classic vim (compatibility)
-    vscode             # Visual Studio Code
+    # VS Code 走 Homebrew cask，不在这里——它的扩展要原地改写 app bundle，
+    # 与只读的 /nix/store 正面冲突。理由见 README §4.14。
 
     # ===== DATABASE TOOLS =====
     sqlite             # SQLite database
@@ -110,6 +111,23 @@ in
     docker-compose     # compose v2
     docker-buildx      # buildx
     lazydocker         # 终端 UI，比 docker ps 循环好用
+
+    # ===== CONFIG MANAGEMENT =====
+    # nixpkgs 的 ansible 就是 ansible-core（不含社区 collections，需要时用
+    # ansible-galaxy 装到 ~/.ansible/collections，store 外随装随用）；
+    # 要锁旧版本可用 ansible_2_18 / ansible_2_19 等 attr。
+    ansible           # 服务器批量配置管理与运维
+
+    # ===== 平台 CLI =====
+    # 飞书/Lark 开放平台官方 CLI（github.com/larksuite/cli），二进制名 lark-cli。
+    # nixpkgs 里另有第三方的 feishu-cli（riba2534/feishu-cli），不是同一个东西。
+    lark-cli           # 飞书开放平台应用脚手架 / 调试 / 发布
+
+    # ===== JAVASCRIPT =====
+    # nodejs_22 本身在 ../packages/ai.nix（它最初是为 AI CLI 装的），这里只补
+    # 包管理器。pnpm 自带 nodejs-slim 作为**自己的**运行时，项目代码和生命周期
+    # 脚本仍然跑在 PATH 上的 nodejs_22。
+    pnpm               # pnpm + pnpx（全局安装目录见 ../shell.nix 的 PNPM_HOME）
 
     # ===== PROGRAMMING LANGUAGES =====
     rustToolchain      # Rust compiler + cargo + rustfmt (with std sources for rust-analyzer)
